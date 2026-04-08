@@ -1,0 +1,17 @@
+## Personal identity layer — never commit
+identity/
+pipeline/cookies.txt
+pipeline/urls.txt
+pipeline/notes/
+pipeline/urls_failed.txt
+
+## Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+## OS
+.DS_Store
+Thumbs.db

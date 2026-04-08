@@ -1,0 +1,44 @@
+# memory.md — Work profile
+
+Collaboration preferences and personal context. Different from CLAUDE.md (which defines behavior) and lessons.md (which records technical errors).
+
+---
+
+## Profile
+
+- {{YOUR_NAME}} — {{YOUR_ROLE}}
+- Technical level: {{YOUR_TECH_LEVEL}}
+- OS: {{YOUR_OS}}
+
+---
+
+## Active projects
+
+*(Review this section at the start of each new project or when a project concludes)*
+
+- **{{PROJECT_1}}** — {{PROJECT_1_DESCRIPTION}}
+- **{{PROJECT_2}}** — {{PROJECT_2_DESCRIPTION}}
+
+---
+
+## Collaboration style
+
+- Prefers to debate before executing on architectural decisions
+- Interested in real tensions and honest perspectives — not validation
+- Doesn't like unrequested features or improvements added
+- Values modularity — prefers systems that work together over monolithic ones
+
+---
+
+## Technical preferences
+
+- {{YOUR_TESTING_PREFERENCE}}
+- No obvious comments in code
+- No documentation files unless explicitly requested
+- Atomic commits with descriptive messages
+
+---
+
+## Updates
+
+*(Add here when you correct collaboration preferences)*

@@ -1,0 +1,46 @@
+# lessons.md — System learning log
+
+Update after ANY correction. Format: detected pattern → prevention → source → date.
+Review at the start of recurring project sessions.
+
+---
+
+## Foundation lessons (generic — keep these)
+
+**L001 — Folder structure is not the goal**
+- Pattern: Creating `/agents/`, `/rules/`, `/hooks/` empty or with generic content and assuming the environment improved.
+- Prevention: Value is in file content, not existence. Don't create a file without concrete content that adds differential behavior.
+
+**L002 — Generic CLAUDE.md adds nothing**
+- Pattern: Copying someone else's CLAUDE.md without adapting it to your own context and work style.
+- Prevention: Every principle in CLAUDE.md must reflect how YOU specifically work. If a principle doesn't change any concrete behavior, don't add it.
+
+**L003 — Slash commands are sugar over prompts**
+- Pattern: Creating slash commands before having good base prompts.
+- Prevention: First build and validate the prompt in conversation. Then package as a command. Never the reverse.
+
+**L004 — Unfocused subagents fragment context**
+- Pattern: Launching subagents for any task as if more agents = better result.
+- Prevention: A subagent must have a focused task and a well-defined output.
+
+**L005 — The auto-improvement loop breaks if it's not automatic**
+- Pattern: Saying "I'll update lessons.md when I find errors" but not having the habit established.
+- Prevention: The instruction is in CLAUDE.md as a non-negotiable principle.
+
+**L006 — Preference memory is different from technical lessons**
+- Pattern: Mixing technical errors with work preferences in the same file.
+- Prevention: lessons.md = errors and technical patterns. memory.md = collaboration preferences.
+
+**L007 — Reviewer agent must have zero context**
+- Pattern: Launching a review subagent with the full decision history → it validates instead of reviews, because it's already "contaminated" by previous reasoning.
+- Prevention: The reviewer is launched without previous context, only with the artifact to review. Confirmation bias applies to agents just as to people.
+
+**L008 — /compact without instructions loses important decisions**
+- Pattern: Using `/compact` by default → Claude summarizes recent history but forgets architecture decisions, agreed stack and established patterns.
+- Prevention: Always compact with explicit instructions preserving architecture decisions and agreed patterns.
+
+---
+
+## Project-specific lessons
+
+*(Add here — only patterns that apply globally, not domain-specific logic)*
