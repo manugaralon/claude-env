@@ -105,6 +105,21 @@ Edit `~/.claude/CLAUDE.md` directly at any time. The templates in `core/` are th
 
 To regenerate from scratch: `./setup.sh` (will ask before overwriting).
 
+## Trace2Skill — skills that learn from runs
+
+Instead of writing skills by hand, run your agent 20 times, give one-sentence feedback per run, and let 4 parallel analyst agents extract the rules from the actual traces.
+
+Based on the [Trace2Skill paper](https://arxiv.org/pdf/2603.25158) (Alibaba Qwen team). Skills built this way consistently outperform hand-written ones.
+
+```
+core/agents/          ← 4 analyst agents (error, success, structure, edge)
+core/workflows/trace2skill.md  ← step-by-step workflow
+```
+
+See `core/workflows/trace2skill.md` for the full process.
+
+---
+
 ## License
 
 MIT
