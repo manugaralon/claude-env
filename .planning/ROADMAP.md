@@ -29,7 +29,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Template registry can resolve and render any template by name given a context dict
   3. Domain profile YAML files for web, CLI, data, and infra are loadable and schema-valid
   4. `ruff` and `mypy` pass on the initial codebase with zero errors
-**Plans**: TBD
+**Plans:** 3 plans
+Plans:
+- [ ] 01-01-PLAN.md — Bootstrap: pyproject.toml with ruff/mypy/pytest config, package tree with subpackages, Typer CLI stub, tests scaffold with conftest
+- [ ] 01-02-PLAN.md — DomainProfile Pydantic v2 model with `extra="forbid"` + 5 YAML profiles (web, cli, data, infra, general) + schema-drift tests
+- [ ] 01-03-PLAN.md — TemplateRegistry (Jinja2 + StrictUndefined + absolute-path guard) + 3 stub templates + unit/integration tests
 
 ### Phase 2: Pipeline
 **Goal**: A freeform idea or structured spec file flows through to a validated GenerationPlan data structure — no files written yet
@@ -82,7 +86,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/3 | Not started | - |
 | 2. Pipeline | 0/TBD | Not started | - |
 | 3. Generator | 0/TBD | Not started | - |
 | 4. CLI + Skill | 0/TBD | Not started | - |
