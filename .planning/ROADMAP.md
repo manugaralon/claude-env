@@ -12,7 +12,7 @@ Build a pipeline that turns a raw project idea or structured spec into a fully c
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Project scaffold, dependencies, template registry, domain profile YAML files
+- [x] **Phase 1: Foundation** - Project scaffold, dependencies, template registry, domain profile YAML files (completed 2026-04-16)
 - [ ] **Phase 2: Pipeline** - Input normalizer, domain classifier, environment planner — pure data, no I/O
 - [ ] **Phase 3: Generator** - Executes GenerationPlan: all output files with idempotent merge strategy
 - [ ] **Phase 4: CLI + Skill** - Typer entrypoint (setup, bootstrap, --dry-run), Claude Code skill wrapper
@@ -29,7 +29,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Template registry can resolve and render any template by name given a context dict
   3. Domain profile YAML files for web, CLI, data, and infra are loadable and schema-valid
   4. `ruff` and `mypy` pass on the initial codebase with zero errors
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 Plans:
 - [ ] 01-01-PLAN.md — Bootstrap: pyproject.toml with ruff/mypy/pytest config, package tree with subpackages, Typer CLI stub, tests scaffold with conftest
 - [ ] 01-02-PLAN.md — DomainProfile Pydantic v2 model with `extra="forbid"` + 5 YAML profiles (web, cli, data, infra, general) + schema-drift tests
@@ -86,7 +86,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 2/3 | In Progress|  |
+| 1. Foundation | 3/3 | Complete   | 2026-04-16 |
 | 2. Pipeline | 0/TBD | Not started | - |
 | 3. Generator | 0/TBD | Not started | - |
 | 4. CLI + Skill | 0/TBD | Not started | - |

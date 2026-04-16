@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-foundation 01-02-PLAN.md
-last_updated: "2026-04-16T12:09:18.800Z"
+stopped_at: Completed 01-foundation 01-03-PLAN.md
+last_updated: "2026-04-16T12:12:39.922Z"
 last_activity: 2026-04-16 — Roadmap created
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
   percent: 33
 ---
 
@@ -52,6 +52,7 @@ Progress: [███░░░░░░░] 33%
 *Updated after each plan completion*
 | Phase 01-foundation P01 | 3 | 3 tasks | 12 files |
 | Phase 01-foundation P02 | 8 | 2 tasks | 9 files |
+| Phase 01-foundation P03 | 8 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,9 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: detection_signals are flat strings resolving Open Q1 from research
 - [Phase 01-foundation]: general.yaml uses detection_signals: [] as fallback — resolves Open Q3, never auto-detected
 - [Phase 01-foundation]: DomainProfile extra='forbid' — Phase 2+ field additions require model update first
+- [Phase 01-foundation]: TemplateRegistry uses StrictUndefined — missing context vars raise immediately (closes research Pitfall #5)
+- [Phase 01-foundation]: templates/ at project root, not inside claude_env/ — FileSystemLoader reads plain directory, not Python package
+- [Phase 01-foundation]: Absolute path guard in TemplateRegistry.__init__ closes Pitfall #2 (cwd-dependent lookup failures)
 
 ### Pending Todos
 
@@ -83,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-16T12:09:18.795Z
-Stopped at: Completed 01-foundation 01-02-PLAN.md
+Last session: 2026-04-16T12:12:39.918Z
+Stopped at: Completed 01-foundation 01-03-PLAN.md
 Resume file: None
