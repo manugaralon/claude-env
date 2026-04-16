@@ -1,0 +1,7 @@
+display_name: Broken
+description: Missing domain key
+skill_slugs: [a, b]
+agent_slugs: [x]
+claude_md_sections: [s]
+hook_templates: [h]
+detection_signals: [d]

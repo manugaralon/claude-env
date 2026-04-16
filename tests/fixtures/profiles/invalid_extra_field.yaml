@@ -1,0 +1,9 @@
+domain: web
+display_name: Bad
+description: Has extra field
+skill_slugs: [a]
+agent_slugs: [x]
+claude_md_sections: [s]
+hook_templates: [h]
+detection_signals: [d]
+foo: bar
