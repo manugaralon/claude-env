@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-foundation 01-01-PLAN.md
-last_updated: "2026-04-16T12:05:54.644Z"
+stopped_at: Completed 01-foundation 01-02-PLAN.md
+last_updated: "2026-04-16T12:09:18.800Z"
 last_activity: 2026-04-16 — Roadmap created
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
   percent: 33
 ---
 
@@ -51,6 +51,7 @@ Progress: [███░░░░░░░] 33%
 
 *Updated after each plan completion*
 | Phase 01-foundation P01 | 3 | 3 tasks | 12 files |
+| Phase 01-foundation P02 | 8 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -66,6 +67,9 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: hatchling build backend with explicit packages=[claude_env] for src-less layout compatibility
 - [Phase 01-foundation]: templates/ at project root (not inside claude_env/) for Jinja2 FileSystemLoader compatibility
 - [Phase 01-foundation]: types-pyyaml in dev deps so mypy strict passes on yaml imports
+- [Phase 01-foundation]: detection_signals are flat strings resolving Open Q1 from research
+- [Phase 01-foundation]: general.yaml uses detection_signals: [] as fallback — resolves Open Q3, never auto-detected
+- [Phase 01-foundation]: DomainProfile extra='forbid' — Phase 2+ field additions require model update first
 
 ### Pending Todos
 
@@ -79,6 +83,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-16T12:05:54.641Z
-Stopped at: Completed 01-foundation 01-01-PLAN.md
+Last session: 2026-04-16T12:09:18.795Z
+Stopped at: Completed 01-foundation 01-02-PLAN.md
 Resume file: None
