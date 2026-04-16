@@ -1,0 +1,25 @@
+domain: data
+display_name: Data Pipeline
+description: ETL, analytics, or data-processing project with structured inputs and outputs
+skill_slugs:
+  - fix-issue
+  - run-pipeline
+  - validate-schema
+  - profile-data
+agent_slugs:
+  - data-quality-reviewer
+  - schema-auditor
+claude_md_sections:
+  - plan_execute_verify
+  - context_management
+  - lessons_loop
+  - schema_contracts
+hook_templates:
+  - lint_after_edit
+  - typecheck_after_edit
+detection_signals:
+  - dbt_project.yml
+  - airflow.cfg
+  - dags/
+  - notebooks/
+  - requirements.txt

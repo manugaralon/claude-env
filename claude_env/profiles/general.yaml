@@ -1,0 +1,17 @@
+domain: general
+display_name: General Project
+description: Fallback profile when classifier detects no specific domain signal
+skill_slugs:
+  - fix-issue
+  - create-pr
+  - run-lint
+agent_slugs:
+  - code-reviewer
+  - security-reviewer
+claude_md_sections:
+  - plan_execute_verify
+  - context_management
+  - lessons_loop
+hook_templates:
+  - lint_after_edit
+detection_signals: []

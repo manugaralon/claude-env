@@ -1,0 +1,26 @@
+domain: infra
+display_name: Infrastructure as Code
+description: Deployment, infrastructure provisioning, or platform-engineering project
+skill_slugs:
+  - fix-issue
+  - plan-apply
+  - validate-manifest
+  - run-lint
+agent_slugs:
+  - security-reviewer
+  - cost-reviewer
+claude_md_sections:
+  - plan_execute_verify
+  - context_management
+  - lessons_loop
+  - blast_radius
+hook_templates:
+  - lint_after_edit
+  - validate_manifest
+detection_signals:
+  - terraform/
+  - main.tf
+  - Dockerfile
+  - docker-compose.yml
+  - kustomization.yaml
+  - helmfile.yaml

@@ -1,0 +1,25 @@
+domain: web
+display_name: Web Application
+description: Frontend or fullstack web project with browser-facing UI
+skill_slugs:
+  - fix-issue
+  - create-pr
+  - run-lint
+  - update-deps
+agent_slugs:
+  - security-reviewer
+  - accessibility-auditor
+claude_md_sections:
+  - mobile_first
+  - plan_execute_verify
+  - context_management
+  - lessons_loop
+hook_templates:
+  - lint_after_edit
+  - typecheck_after_edit
+detection_signals:
+  - package.json
+  - index.html
+  - src/App.tsx
+  - src/main.tsx
+  - tailwind.config.js

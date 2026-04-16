@@ -1,0 +1,25 @@
+domain: cli
+display_name: Command-Line Tool
+description: Terminal-invokable tool with subcommands and scripted workflows
+skill_slugs:
+  - fix-issue
+  - create-pr
+  - run-lint
+  - add-subcommand
+agent_slugs:
+  - cli-ux-reviewer
+  - security-reviewer
+claude_md_sections:
+  - plan_execute_verify
+  - context_management
+  - lessons_loop
+  - surgical_changes
+hook_templates:
+  - lint_after_edit
+  - typecheck_after_edit
+detection_signals:
+  - pyproject.toml
+  - setup.py
+  - cli.py
+  - main.py
+  - bin/
