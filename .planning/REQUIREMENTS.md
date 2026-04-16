@@ -48,18 +48,18 @@
 
 | REQ-ID | Phase |
 |--------|-------|
-| PIPE-01 | — |
-| PIPE-02 | — |
-| PIPE-03 | — |
-| PIPE-04 | — |
-| GEN-01 | — |
-| GEN-02 | — |
-| GEN-03 | — |
-| GEN-04 | — |
-| GEN-05 | — |
-| GEN-06 | — |
-| CLI-01 | — |
-| CLI-02 | — |
-| CLI-03 | — |
-| CLI-04 | — |
-| QA-01 | — |
+| PIPE-01 | Phase 2 |
+| PIPE-02 | Phase 2 |
+| PIPE-03 | Phase 2 |
+| PIPE-04 | Phase 2 |
+| GEN-01 | Phase 3 |
+| GEN-02 | Phase 3 |
+| GEN-03 | Phase 3 |
+| GEN-04 | Phase 3 |
+| GEN-05 | Phase 3 |
+| GEN-06 | Phase 3 |
+| CLI-01 | Phase 4 |
+| CLI-02 | Phase 4 |
+| CLI-03 | Phase 4 |
+| CLI-04 | Phase 4 |
+| QA-01 | Phase 5 |
