@@ -53,3 +53,66 @@ def test_keep_trailing_newline(templates_dir: Path) -> None:
     (templates_dir / "nl.j2").write_text("line\n")
     registry = TemplateRegistry(templates_dir=templates_dir)
     assert registry.render("nl.j2", {}).endswith("\n")
+
+
+# ---- Integration tests against real project-root templates/ directory ----
+
+REAL_TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
+
+
+def test_real_templates_directory_exists() -> None:
+    assert REAL_TEMPLATES_DIR.is_dir()
+
+
+def test_claude_md_project_renders() -> None:
+    registry = TemplateRegistry(templates_dir=REAL_TEMPLATES_DIR.resolve())
+    out = registry.render(
+        "claude_md_project.j2",
+        {
+            "project_name": "TestProj",
+            "domain": "web",
+            "sections": ["plan_execute_verify", "context_management"],
+        },
+    )
+    assert "TestProj" in out
+    assert "web" in out
+    assert "plan_execute_verify" in out
+    assert "context_management" in out
+
+
+def test_skill_stub_renders() -> None:
+    registry = TemplateRegistry(templates_dir=REAL_TEMPLATES_DIR.resolve())
+    out = registry.render(
+        "skill_stub.j2",
+        {
+            "skill_name": "fix-issue",
+            "description": "Fix a reported issue with minimal changes.",
+            "invocation": "/fix-issue",
+        },
+    )
+    assert "fix-issue" in out
+    assert "/fix-issue" in out
+    assert out.startswith("---")  # YAML frontmatter
+
+
+def test_agent_stub_renders() -> None:
+    registry = TemplateRegistry(templates_dir=REAL_TEMPLATES_DIR.resolve())
+    out = registry.render(
+        "agent_stub.j2",
+        {
+            "agent_name": "security-reviewer",
+            "description": "Reviews code for security issues.",
+            "skills": ["fix-issue", "run-lint"],
+        },
+    )
+    assert "security-reviewer" in out
+    assert "- fix-issue" in out
+    assert "- run-lint" in out
+
+
+def test_list_templates_finds_all_stubs() -> None:
+    registry = TemplateRegistry(templates_dir=REAL_TEMPLATES_DIR.resolve())
+    listed = registry.list_templates()
+    assert "claude_md_project.j2" in listed
+    assert "skill_stub.j2" in listed
+    assert "agent_stub.j2" in listed
