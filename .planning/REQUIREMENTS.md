@@ -4,10 +4,10 @@
 
 ### Core Pipeline
 
-- [ ] **PIPE-01**: System accepts raw freeform idea text as input and normalizes it to a structured ProjectSpec
-- [ ] **PIPE-02**: System accepts a structured spec document (markdown/YAML) as input
-- [ ] **PIPE-03**: System classifies ProjectSpec into a technical domain using static domain profiles (web, CLI, data, infra, general)
-- [ ] **PIPE-04**: System produces a GenerationPlan from ProjectSpec + DomainProfile (pure data structure, no I/O)
+- [x] **PIPE-01**: System accepts raw freeform idea text as input and normalizes it to a structured ProjectSpec
+- [x] **PIPE-02**: System accepts a structured spec document (markdown/YAML) as input
+- [x] **PIPE-03**: System classifies ProjectSpec into a technical domain using static domain profiles (web, CLI, data, infra, general)
+- [x] **PIPE-04**: System produces a GenerationPlan from ProjectSpec + DomainProfile (pure data structure, no I/O)
 
 ### Generation
 

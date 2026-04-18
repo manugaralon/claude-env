@@ -103,7 +103,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete    | 2026-04-18 |
-| 2. Pipeline | 0/TBD | Not started | - |
+| 2. Pipeline | 1/3 | In Progress|  |
 | 3. Generator | 0/TBD | Not started | - |
 | 4. CLI + Skill | 0/TBD | Not started | - |
 | 5. Audit | 0/TBD | Not started | - |

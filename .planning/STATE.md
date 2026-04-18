@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-foundation 01-03-PLAN.md
-last_updated: "2026-04-18T15:07:48.904Z"
+stopped_at: Completed 02-pipeline 02-01-PLAN.md
+last_updated: "2026-04-18T20:13:01.722Z"
 last_activity: 2026-04-16 — Roadmap created
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 6
+  completed_plans: 4
   percent: 33
 ---
 
@@ -53,6 +53,7 @@ Progress: [███░░░░░░░] 33%
 | Phase 01-foundation P01 | 3 | 3 tasks | 12 files |
 | Phase 01-foundation P02 | 8 | 2 tasks | 9 files |
 | Phase 01-foundation P03 | 8 | 2 tasks | 5 files |
+| Phase 02-pipeline P01 | 2 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -74,6 +75,8 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: TemplateRegistry uses StrictUndefined — missing context vars raise immediately (closes research Pitfall #5)
 - [Phase 01-foundation]: templates/ at project root, not inside claude_env/ — FileSystemLoader reads plain directory, not Python package
 - [Phase 01-foundation]: Absolute path guard in TemplateRegistry.__init__ closes Pitfall #2 (cwd-dependent lookup failures)
+- [Phase 02-pipeline]: OutputLayer uses StrEnum (not str+Enum) per ruff UP042 — cleaner, Python 3.11+ idiomatic
+- [Phase 02-pipeline]: anthropic pinned to >=0.96 matching the version available in uv resolution (0.96.0)
 
 ### Pending Todos
 
@@ -87,6 +90,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-16T12:12:39.918Z
-Stopped at: Completed 01-foundation 01-03-PLAN.md
+Last session: 2026-04-18T20:13:01.719Z
+Stopped at: Completed 02-pipeline 02-01-PLAN.md
 Resume file: None
