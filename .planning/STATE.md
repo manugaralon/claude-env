@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 02-pipeline 02-01-PLAN.md
-last_updated: "2026-04-18T20:13:01.722Z"
+stopped_at: Completed 02-pipeline 02-02-PLAN.md
+last_updated: "2026-04-18T20:17:13.463Z"
 last_activity: 2026-04-16 — Roadmap created
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 6
   percent: 33
 ---
 
@@ -54,6 +54,8 @@ Progress: [███░░░░░░░] 33%
 | Phase 01-foundation P02 | 8 | 2 tasks | 9 files |
 | Phase 01-foundation P03 | 8 | 2 tasks | 5 files |
 | Phase 02-pipeline P01 | 2 | 2 tasks | 9 files |
+| Phase 02-pipeline P03 | 2 | 2 tasks | 4 files |
+| Phase 02-pipeline P02 | 12 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -77,6 +79,12 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Absolute path guard in TemplateRegistry.__init__ closes Pitfall #2 (cwd-dependent lookup failures)
 - [Phase 02-pipeline]: OutputLayer uses StrEnum (not str+Enum) per ruff UP042 — cleaner, Python 3.11+ idiomatic
 - [Phase 02-pipeline]: anthropic pinned to >=0.96 matching the version available in uv resolution (0.96.0)
+- [Phase 02-pipeline]: Signal matching uses tech_stack+languages token set (case-insensitive) against detection_signals
+- [Phase 02-pipeline]: Template ID validation occurs inside plan() before returning GenerationPlan — early failure, not deferred to generator phase
+- [Phase 02-pipeline]: All Artifacts assigned layer=PROJECT — global layer assignment is a Phase 3 generator concern
+- [Phase 02-pipeline]: Mock client injected via __init__ constructor (not module-level) — LLM path testable without ANTHROPIC_API_KEY
+- [Phase 02-pipeline]: TextBlock constructed as real Pydantic model in tests so isinstance check passes in InputNormalizer
+- [Phase 02-pipeline]: _extract_json strips both plain and json-fenced responses before json.loads — handles LLM wrapping
 
 ### Pending Todos
 
@@ -90,6 +98,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-18T20:13:01.719Z
-Stopped at: Completed 02-pipeline 02-01-PLAN.md
+Last session: 2026-04-18T20:17:13.459Z
+Stopped at: Completed 02-pipeline 02-02-PLAN.md
 Resume file: None
