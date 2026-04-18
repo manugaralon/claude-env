@@ -1,12 +1,12 @@
 """GenerationPlan Pydantic v2 model — output contract of the pipeline planning step."""
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict
 
 
-class OutputLayer(str, Enum):
+class OutputLayer(StrEnum):
     """Where a generated artifact is installed."""
 
     GLOBAL = "global"
