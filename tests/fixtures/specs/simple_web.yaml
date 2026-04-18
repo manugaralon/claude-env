@@ -1,0 +1,13 @@
+name: habit-tracker
+description: A web application for tracking daily habits with streaks and reminders
+domain_hint: web
+languages:
+  - python
+  - typescript
+tech_stack:
+  - react
+  - fastapi
+  - postgres
+constraints:
+  - offline-first
+known_skills: []

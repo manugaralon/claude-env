@@ -1,0 +1,10 @@
+name: file-organizer
+description: CLI tool that organizes files by type and date into structured directories
+domain_hint: cli
+languages:
+  - python
+tech_stack:
+  - typer
+  - rich
+constraints: []
+known_skills: []
