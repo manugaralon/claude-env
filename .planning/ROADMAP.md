@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Project scaffold, dependencies, template registry, domain profile YAML files (completed 2026-04-16)
 - [x] **Phase 2: Pipeline** - Input normalizer, domain classifier, environment planner — pure data, no I/O (completed 2026-04-18)
-- [ ] **Phase 3: Generator** - Executes GenerationPlan: all output files with idempotent merge strategy
+- [x] **Phase 3: Generator** - Executes GenerationPlan: all output files with idempotent merge strategy (completed 2026-04-19)
 - [ ] **Phase 4: CLI + Skill** - Typer entrypoint (setup, bootstrap, --dry-run), Claude Code skill wrapper
 - [ ] **Phase 5: Audit** - Structural validation of generated environment before developer starts
 
@@ -60,7 +60,7 @@ Plans:
   3. Generated `.claude/agents/` contains 2–3 agent files with explicit `skills:` references to generated skills
   4. Generated `.claude/settings.json` is valid JSON with lint/typecheck hooks using hardcoded paths and exit code 2
   5. Re-running generator on an already-generated project merges safely — existing user edits in sentinel-protected sections are preserved
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 03-01-PLAN.md — Sentinel merge module, content catalogue, expanded CLAUDE.md template, settings.json template + tests
 - [ ] 03-02-PLAN.md — Generator class (execute GenerationPlan to disk) + comprehensive GEN-01 through GEN-06 test suite
@@ -95,6 +95,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete    | 2026-04-18 |
 | 2. Pipeline | 3/3 | Complete    | 2026-04-18 |
-| 3. Generator | 1/2 | In Progress|  |
+| 3. Generator | 2/2 | Complete   | 2026-04-19 |
 | 4. CLI + Skill | 0/TBD | Not started | - |
 | 5. Audit | 0/TBD | Not started | - |

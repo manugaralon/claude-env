@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 03-generator 03-01-PLAN.md
-last_updated: "2026-04-19T11:49:29.895Z"
+stopped_at: Completed 03-generator 03-02-PLAN.md
+last_updated: "2026-04-19T11:53:54.178Z"
 last_activity: 2026-04-16 — Roadmap created
 progress:
   total_phases: 5
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 8
-  completed_plans: 7
+  completed_plans: 8
   percent: 33
 ---
 
@@ -57,6 +57,7 @@ Progress: [███░░░░░░░] 33%
 | Phase 02-pipeline P03 | 2 | 2 tasks | 4 files |
 | Phase 02-pipeline P02 | 12 | 2 tasks | 3 files |
 | Phase 03-generator P01 | 3 | 2 tasks | 8 files |
+| Phase 03-generator P02 | 3 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -88,6 +89,8 @@ Recent decisions affecting current work:
 - [Phase 02-pipeline]: _extract_json strips both plain and json-fenced responses before json.loads — handles LLM wrapping
 - [Phase 03-generator]: Sentinel uses _BEGIN/_END private constants so marker strings never appear in template output
 - [Phase 03-generator]: content_catalogue uses setdefault so caller-supplied context always wins over catalogue defaults
+- [Phase 03-generator]: Generator dispatches on artifact.layer not has_sentinel() — file content never determines write strategy
+- [Phase 03-generator]: GLOBAL first write uses wrap_with_sentinel so sentinel markers exist from day one, not just on re-runs
 
 ### Pending Todos
 
@@ -101,6 +104,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-19T11:49:29.893Z
-Stopped at: Completed 03-generator 03-01-PLAN.md
+Last session: 2026-04-19T11:53:54.174Z
+Stopped at: Completed 03-generator 03-02-PLAN.md
 Resume file: None
