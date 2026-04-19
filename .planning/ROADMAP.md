@@ -95,6 +95,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete    | 2026-04-18 |
 | 2. Pipeline | 3/3 | Complete    | 2026-04-18 |
-| 3. Generator | 2/2 | Complete   | 2026-04-19 |
+| 3. Generator | 2/2 | Complete    | 2026-04-19 |
 | 4. CLI + Skill | 0/TBD | Not started | - |
 | 5. Audit | 0/TBD | Not started | - |
