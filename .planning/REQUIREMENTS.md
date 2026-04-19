@@ -11,12 +11,12 @@
 
 ### Generation
 
-- [ ] **GEN-01**: Generator produces per-project `.claude/CLAUDE.md` ≤200 lines with behavioral rules, plan→execute→verify pattern, context management rules, and auto-improvement loop (lessons.md)
-- [ ] **GEN-02**: Generator produces 3–5 domain-appropriate `.claude/skills/<name>/SKILL.md` files with correct frontmatter and verb-phrase descriptions
-- [ ] **GEN-03**: Generator produces 2–3 domain-appropriate `.claude/agents/<name>.md` files with explicit `skills:` references
-- [ ] **GEN-04**: Generator produces `.claude/settings.json` with lint/typecheck hooks using hardcoded paths and exit code 2 for blocking
-- [ ] **GEN-05**: Generator produces/updates global `~/.claude/CLAUDE.md` with cross-project conventions via merge-safe sentinel pattern
-- [ ] **GEN-06**: All generation is idempotent — re-running merges safely without overwriting user customizations
+- [x] **GEN-01**: Generator produces per-project `.claude/CLAUDE.md` ≤200 lines with behavioral rules, plan→execute→verify pattern, context management rules, and auto-improvement loop (lessons.md)
+- [x] **GEN-02**: Generator produces 3–5 domain-appropriate `.claude/skills/<name>/SKILL.md` files with correct frontmatter and verb-phrase descriptions
+- [x] **GEN-03**: Generator produces 2–3 domain-appropriate `.claude/agents/<name>.md` files with explicit `skills:` references
+- [x] **GEN-04**: Generator produces `.claude/settings.json` with lint/typecheck hooks using hardcoded paths and exit code 2 for blocking
+- [x] **GEN-05**: Generator produces/updates global `~/.claude/CLAUDE.md` with cross-project conventions via merge-safe sentinel pattern
+- [x] **GEN-06**: All generation is idempotent — re-running merges safely without overwriting user customizations
 
 ### CLI
 

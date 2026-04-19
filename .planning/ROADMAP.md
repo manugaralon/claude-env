@@ -60,7 +60,7 @@ Plans:
   3. Generated `.claude/agents/` contains 2–3 agent files with explicit `skills:` references to generated skills
   4. Generated `.claude/settings.json` is valid JSON with lint/typecheck hooks using hardcoded paths and exit code 2
   5. Re-running generator on an already-generated project merges safely — existing user edits in sentinel-protected sections are preserved
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 Plans:
 - [ ] 03-01-PLAN.md — Sentinel merge module, content catalogue, expanded CLAUDE.md template, settings.json template + tests
 - [ ] 03-02-PLAN.md — Generator class (execute GenerationPlan to disk) + comprehensive GEN-01 through GEN-06 test suite
@@ -95,6 +95,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete    | 2026-04-18 |
 | 2. Pipeline | 3/3 | Complete    | 2026-04-18 |
-| 3. Generator | 0/2 | Planning complete | - |
+| 3. Generator | 1/2 | In Progress|  |
 | 4. CLI + Skill | 0/TBD | Not started | - |
 | 5. Audit | 0/TBD | Not started | - |
