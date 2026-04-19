@@ -7,9 +7,12 @@ from pathlib import Path
 import pytest
 
 from claude_env.generator.generator import Generator
-from claude_env.generator.sentinel import SENTINEL_HEADER, has_sentinel, wrap_with_sentinel
-from claude_env.models.generation_plan import Artifact, GenerationPlan, OutputLayer
-
+from claude_env.generator.sentinel import SENTINEL_HEADER, has_sentinel
+from claude_env.models.generation_plan import (
+    Artifact,
+    GenerationPlan,
+    OutputLayer,
+)
 
 # ---------------------------------------------------------------------------
 # GEN-01: Per-project CLAUDE.md content
@@ -23,7 +26,9 @@ def test_claude_md_line_count(tmp_path: Path, real_registry, web_plan: Generatio
     assert len(content.splitlines()) <= 200
 
 
-def test_claude_md_required_sections(tmp_path: Path, real_registry, web_plan: GenerationPlan) -> None:
+def test_claude_md_required_sections(  # noqa: E501
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
     gen = Generator(real_registry)
     gen.execute(web_plan, tmp_path, tmp_path / "global")
     content = (tmp_path / ".claude/CLAUDE.md").read_text(encoding="utf-8").lower()
@@ -272,7 +277,9 @@ def test_path_traversal_rejected(tmp_path: Path, real_registry) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_execute_returns_written_paths(tmp_path: Path, real_registry, web_plan: GenerationPlan) -> None:
+def test_execute_returns_written_paths(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
     gen = Generator(real_registry)
     written = gen.execute(web_plan, tmp_path, tmp_path / "global")
     assert isinstance(written, list)
