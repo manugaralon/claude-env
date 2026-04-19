@@ -76,8 +76,9 @@ def test_claude_md_project_renders() -> None:
     )
     assert "TestProj" in out
     assert "web" in out
-    assert "plan_execute_verify" in out
-    assert "context_management" in out
+    # Template now renders section content, not section IDs
+    assert "Plan" in out  # plan_execute_verify section heading
+    assert "context" in out.lower()  # context_management section
 
 
 def test_skill_stub_renders() -> None:

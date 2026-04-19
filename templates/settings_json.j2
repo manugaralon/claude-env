@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {% for hook in hooks %}
+          { "type": "command", "command": {{ hook.command | tojson }}, "exitCode": {{ hook.exit_code }} }{% if not loop.last %},{% endif %}
+          {% endfor %}
+        ]
+      }
+    ]
+  }
+}
