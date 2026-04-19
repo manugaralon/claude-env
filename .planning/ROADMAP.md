@@ -60,11 +60,10 @@ Plans:
   3. Generated `.claude/agents/` contains 2–3 agent files with explicit `skills:` references to generated skills
   4. Generated `.claude/settings.json` is valid JSON with lint/typecheck hooks using hardcoded paths and exit code 2
   5. Re-running generator on an already-generated project merges safely — existing user edits in sentinel-protected sections are preserved
-**Plans**: 3 plans
+**Plans:** 2 plans
 Plans:
-- [ ] 02-01-PLAN.md — Data contracts (ProjectSpec, GenerationPlan models), anthropic dep, test fixtures
-- [ ] 02-02-PLAN.md — InputNormalizer: freeform LLM extraction + YAML/Markdown spec parsing
-- [ ] 02-03-PLAN.md — DomainClassifier (signal matching) + EnvironmentPlanner (GenerationPlan builder)
+- [ ] 03-01-PLAN.md — Sentinel merge module, content catalogue, expanded CLAUDE.md template, settings.json template + tests
+- [ ] 03-02-PLAN.md — Generator class (execute GenerationPlan to disk) + comprehensive GEN-01 through GEN-06 test suite
 
 ### Phase 4: CLI + Skill
 **Goal**: The tool is invocable from the terminal and from inside Claude Code — global onboarding and per-project bootstrapping both work end-to-end
@@ -75,11 +74,7 @@ Plans:
   2. `claude-env bootstrap` run from a project directory generates a complete `.claude/` layer for that project
   3. `claude-env bootstrap --dry-run` prints every file that would be written without touching disk
   4. `/claude-env:bootstrap` is invocable as a Claude Code skill from any project directory and produces the same output as the CLI
-**Plans**: 3 plans
-Plans:
-- [ ] 02-01-PLAN.md — Data contracts (ProjectSpec, GenerationPlan models), anthropic dep, test fixtures
-- [ ] 02-02-PLAN.md — InputNormalizer: freeform LLM extraction + YAML/Markdown spec parsing
-- [ ] 02-03-PLAN.md — DomainClassifier (signal matching) + EnvironmentPlanner (GenerationPlan builder)
+**Plans**: [To be planned]
 
 ### Phase 5: Audit
 **Goal**: A generated environment is structurally validated before the developer starts — problems are caught immediately, not discovered mid-session
@@ -89,11 +84,7 @@ Plans:
   1. Audit step reports PASS or FAIL with specific failure reasons for: CLAUDE.md line count, settings.json JSON validity, agent files missing `skills:` field, skill descriptions that are not verb-phrases
   2. A deliberately broken generated environment (e.g., settings.json with trailing comma) produces a FAIL report identifying the exact file and rule violated
   3. Audit runs automatically at the end of `claude-env bootstrap` and its exit code reflects pass/fail
-**Plans**: 3 plans
-Plans:
-- [ ] 02-01-PLAN.md — Data contracts (ProjectSpec, GenerationPlan models), anthropic dep, test fixtures
-- [ ] 02-02-PLAN.md — InputNormalizer: freeform LLM extraction + YAML/Markdown spec parsing
-- [ ] 02-03-PLAN.md — DomainClassifier (signal matching) + EnvironmentPlanner (GenerationPlan builder)
+**Plans**: [To be planned]
 
 ## Progress
 
@@ -104,6 +95,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete    | 2026-04-18 |
 | 2. Pipeline | 3/3 | Complete    | 2026-04-18 |
-| 3. Generator | 0/TBD | Not started | - |
+| 3. Generator | 0/2 | Planning complete | - |
 | 4. CLI + Skill | 0/TBD | Not started | - |
 | 5. Audit | 0/TBD | Not started | - |
