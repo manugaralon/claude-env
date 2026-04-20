@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 03-generator 03-02-PLAN.md
-last_updated: "2026-04-19T18:07:36.152Z"
+stopped_at: Completed 04-cli-skill 04-01-PLAN.md
+last_updated: "2026-04-20T13:33:32.660Z"
 last_activity: 2026-04-16 — Roadmap created
 progress:
   total_phases: 5
   completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 10
+  completed_plans: 9
   percent: 33
 ---
 
@@ -91,6 +91,8 @@ Recent decisions affecting current work:
 - [Phase 03-generator]: content_catalogue uses setdefault so caller-supplied context always wins over catalogue defaults
 - [Phase 03-generator]: Generator dispatches on artifact.layer not has_sentinel() — file content never determines write strategy
 - [Phase 03-generator]: GLOBAL first write uses wrap_with_sentinel so sentinel markers exist from day one, not just on re-runs
+- [Phase 04-cli-skill]: resolve_plan_paths() extracted as module-level function — single source of truth for path resolution used by dry-run and Generator.execute()
+- [Phase 04-cli-skill]: Heavy imports kept inside command bodies to keep CLI startup fast and avoid loading anthropic when using --spec
 
 ### Pending Todos
 
@@ -104,6 +106,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-19T11:53:54.174Z
-Stopped at: Completed 03-generator 03-02-PLAN.md
+Last session: 2026-04-20T13:33:32.658Z
+Stopped at: Completed 04-cli-skill 04-01-PLAN.md
 Resume file: None
