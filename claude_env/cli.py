@@ -12,6 +12,60 @@ console = Console()
 _TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
 _PROFILES_DIR = Path(__file__).parent / "profiles"
 
+_SKILL_MD_CONTENT = """\
+---
+name: bootstrap
+description: >-
+  Generate a complete .claude/ environment layer for the current project using claude-env.
+  Use when bootstrapping a new project, re-running environment generation, or installing
+  Claude Code conventions. Run with --dry-run to preview without writing files.
+allowed-tools: Bash
+---
+
+# Claude Env Bootstrap
+
+Generate the project's `.claude/` environment layer by running the claude-env CLI.
+
+## Steps
+
+1. Confirm `claude-env` is installed:
+
+   ```bash
+   claude-env version
+   ```
+
+2. Run bootstrap in the current project directory:
+
+   ```bash
+   claude-env bootstrap
+   ```
+
+   Or with a spec file (no LLM call):
+
+   ```bash
+   claude-env bootstrap --spec ./spec.yaml
+   ```
+
+   Or dry-run to preview what would be written:
+
+   ```bash
+   claude-env bootstrap --dry-run
+   ```
+
+3. Report which files were written and confirm the `.claude/` layer exists.
+"""
+
+
+def _install_bootstrap_skill(global_root: Path) -> Path:
+    """Write the claude-env SKILL.md to <global_root>/skills/claude-env/bootstrap/SKILL.md.
+
+    Always overwrites. Returns the absolute path written.
+    """
+    target = global_root / "skills" / "claude-env" / "bootstrap" / "SKILL.md"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(_SKILL_MD_CONTENT, encoding="utf-8")
+    return target
+
 
 @app.command()
 def version() -> None:
@@ -48,9 +102,11 @@ def setup() -> None:
         global_root=Path.home() / ".claude",
     )
 
-    # HOOK: Plan 04-02 will install the claude-env SKILL.md here.
+    skill_path = _install_bootstrap_skill(Path.home() / ".claude")
 
-    console.print(f"[green]Setup complete.[/green] Wrote {len(written)} files.")
+    console.print(
+        f"[green]Setup complete.[/green] Wrote {len(written)} files + skill at {skill_path}."
+    )
 
 
 @app.command()
