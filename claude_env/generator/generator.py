@@ -10,8 +10,34 @@ from pathlib import Path
 
 from claude_env.generator.content_catalogue import enrich_artifact_context
 from claude_env.generator.sentinel import merge_sentinel_block, wrap_with_sentinel
-from claude_env.models.generation_plan import Artifact, GenerationPlan, OutputLayer
+from claude_env.models.generation_plan import GenerationPlan, OutputLayer
 from claude_env.templates.registry import TemplateRegistry
+
+
+def resolve_plan_paths(
+    plan: GenerationPlan,
+    project_root: Path,
+    global_root: Path,
+) -> list[Path]:
+    """Resolve every artifact in *plan* to its absolute target Path without writing.
+
+    Single source of truth for path resolution — used by Generator.execute()
+    and by the CLI's --dry-run mode.
+
+    Raises:
+        ValueError: if any artifact's target_path attempts path traversal.
+    """
+    paths: list[Path] = []
+    for artifact in plan.artifacts:
+        if artifact.layer == OutputLayer.PROJECT:
+            layer_root = project_root / ".claude"
+        else:
+            layer_root = global_root
+        target = (layer_root / artifact.target_path).resolve()
+        if not str(target).startswith(str(layer_root.resolve())):
+            raise ValueError(f"Path traversal detected: {artifact.target_path}")
+        paths.append(target)
+    return paths
 
 
 class Generator:
@@ -61,8 +87,8 @@ class Generator:
         """
         written: list[Path] = []
 
-        for artifact in plan.artifacts:
-            target = self._resolve_path(artifact, project_root, global_root)
+        resolved = resolve_plan_paths(plan, project_root, global_root)
+        for artifact, target in zip(plan.artifacts, resolved, strict=True):
             context = enrich_artifact_context(artifact, plan)
             rendered_content = self._registry.render(artifact.template_id, context)
 
@@ -81,37 +107,3 @@ class Generator:
             written.append(target)
 
         return written
-
-    def _resolve_path(
-        self,
-        artifact: Artifact,
-        project_root: Path,
-        global_root: Path,
-    ) -> Path:
-        """Resolve an artifact's target_path to an absolute filesystem path.
-
-        PROJECT-layer artifacts resolve under ``project_root/.claude/``.
-        GLOBAL-layer artifacts resolve under ``global_root/``.
-
-        Args:
-            artifact: The artifact whose path to resolve.
-            project_root: Project root directory.
-            global_root: Global configuration root directory.
-
-        Returns:
-            Absolute resolved Path.
-
-        Raises:
-            ValueError: if target_path attempts path traversal outside the layer root.
-        """
-        if artifact.layer == OutputLayer.PROJECT:
-            layer_root = project_root / ".claude"
-        else:
-            layer_root = global_root
-
-        target = (layer_root / artifact.target_path).resolve()
-
-        if not str(target).startswith(str(layer_root.resolve())):
-            raise ValueError(f"Path traversal detected: {artifact.target_path}")
-
-        return target
