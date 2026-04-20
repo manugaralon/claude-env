@@ -23,7 +23,7 @@
 - [x] **CLI-01**: `claude-env setup` — global onboarding wizard that generates `~/.claude/` layer
 - [x] **CLI-02**: `claude-env bootstrap` — per-project generation that produces `.claude/` layer
 - [x] **CLI-03**: `--dry-run` flag shows what would be written without writing
-- [ ] **CLI-04**: Tool is installable as Claude Code skill `~/.claude/skills/claude-env/SKILL.md` invocable from any project
+- [x] **CLI-04**: Tool is installable as Claude Code skill `~/.claude/skills/claude-env/SKILL.md` invocable from any project
 
 ### Quality
 

@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 04-cli-skill 04-01-PLAN.md
-last_updated: "2026-04-20T13:33:32.660Z"
+stopped_at: Completed 04-cli-skill 04-02-PLAN.md
+last_updated: "2026-04-20T13:38:02.372Z"
 last_activity: 2026-04-16 — Roadmap created
 progress:
   total_phases: 5
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 10
-  completed_plans: 9
+  completed_plans: 10
   percent: 33
 ---
 
@@ -93,6 +93,7 @@ Recent decisions affecting current work:
 - [Phase 03-generator]: GLOBAL first write uses wrap_with_sentinel so sentinel markers exist from day one, not just on re-runs
 - [Phase 04-cli-skill]: resolve_plan_paths() extracted as module-level function — single source of truth for path resolution used by dry-run and Generator.execute()
 - [Phase 04-cli-skill]: Heavy imports kept inside command bodies to keep CLI startup fast and avoid loading anthropic when using --spec
+- [Phase 04-cli-skill]: SKILL.md is a fixed string constant, not a Jinja template — no user-dependent content needed for the global bootstrap skill
 
 ### Pending Todos
 
@@ -106,6 +107,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-20T13:33:32.658Z
-Stopped at: Completed 04-cli-skill 04-01-PLAN.md
+Last session: 2026-04-20T13:38:02.367Z
+Stopped at: Completed 04-cli-skill 04-02-PLAN.md
 Resume file: None

@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - Project scaffold, dependencies, template registry, domain profile YAML files (completed 2026-04-16)
 - [x] **Phase 2: Pipeline** - Input normalizer, domain classifier, environment planner — pure data, no I/O (completed 2026-04-18)
 - [x] **Phase 3: Generator** - Executes GenerationPlan: all output files with idempotent merge strategy (completed 2026-04-19)
-- [ ] **Phase 4: CLI + Skill** - Typer entrypoint (setup, bootstrap, --dry-run), Claude Code skill wrapper
+- [x] **Phase 4: CLI + Skill** - Typer entrypoint (setup, bootstrap, --dry-run), Claude Code skill wrapper (completed 2026-04-20)
 - [ ] **Phase 5: Audit** - Structural validation of generated environment before developer starts
 
 ## Phase Details
@@ -96,5 +96,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation | 3/3 | Complete    | 2026-04-18 |
 | 2. Pipeline | 3/3 | Complete    | 2026-04-18 |
 | 3. Generator | 2/2 | Complete    | 2026-04-19 |
-| 4. CLI + Skill | 1/2 | In Progress|  |
+| 4. CLI + Skill | 2/2 | Complete   | 2026-04-20 |
 | 5. Audit | 0/TBD | Not started | - |
