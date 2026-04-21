@@ -1,6 +1,7 @@
 """CLI entrypoint — setup (global), bootstrap (per-project), version."""
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import typer
@@ -189,6 +190,57 @@ def bootstrap(
     for path in written:
         console.print(f"  [green]wrote[/green] {path}")
     console.print(f"[bold green]Done.[/bold green] {len(written)} files generated.")
+
+
+@app.command()
+def capture(
+    url: str | None = typer.Option(None, "--url", "-u", help="Single URL to capture"),
+    urls_file: Path | None = typer.Option(None, "--urls", help="File with one URL per line"),
+    topic: str = typer.Option("general", "--topic", "-t", help="Tag for output files"),
+    output: Path = typer.Option(Path("./notes"), "--output", "-o", help="Output directory"),
+    language: str = typer.Option("es", "--language", "-l", help="Audio language: es, en, auto"),
+) -> None:
+    """Download an Instagram/video post and extract its content to a .md file."""
+    import subprocess
+
+    from groq import Groq
+
+    from claude_env.capture import process_url
+
+    groq_key = os.environ.get("GROQ_API_KEY", "")
+    if not groq_key:
+        console.print("[red]Error:[/red] GROQ_API_KEY is not set.")
+        raise typer.Exit(1)
+
+    if subprocess.run(["ffmpeg", "-version"], capture_output=True).returncode != 0:
+        console.print("[red]Error:[/red] ffmpeg not installed. Run: sudo apt-get install ffmpeg")
+        raise typer.Exit(1)
+
+    if url is None and urls_file is None:
+        console.print("[red]Error:[/red] provide --url or --urls")
+        raise typer.Exit(1)
+
+    if url:
+        urls = [url]
+    else:
+        assert urls_file is not None
+        if not urls_file.exists():
+            console.print(f"[red]Error:[/red] {urls_file} not found")
+            raise typer.Exit(1)
+        urls = [u.strip() for u in urls_file.read_text().splitlines() if u.strip() and not u.startswith("#")]
+
+    output.mkdir(parents=True, exist_ok=True)
+    client = Groq(api_key=groq_key)
+
+    console.print(f"Capturing {len(urls)} URL(s) → [cyan]{output}[/cyan] [topic: {topic}]")
+    success, failed = 0, 0
+    for u in urls:
+        if process_url(u, topic, output, client, language):
+            success += 1
+        else:
+            failed += 1
+
+    console.print(f"\n[bold]Done.[/bold] {success} OK, {failed} failed. Files in: {output.resolve()}")
 
 
 if __name__ == "__main__":
