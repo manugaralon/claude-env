@@ -95,6 +95,24 @@ def test_dry_run_paths_match_actual_paths(
     assert expected == actual
 
 
+def test_bootstrap_with_description_flag_skips_interactive_prompt(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(Path, "home", lambda: tmp_path / "home")
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    project_dir = tmp_path / "proj"
+    project_dir.mkdir()
+    # With --description, no interactive prompt is attempted — but LLM call
+    # still fails cleanly without a key (expected non-zero exit)
+    result = runner.invoke(
+        app, ["bootstrap", str(project_dir), "--description", "a CLI tool in Python", "--dry-run"]
+    )
+    # Either succeeds (key present in env) or exits cleanly with API key message
+    assert result.exit_code in (0, 1)
+    if result.exit_code == 1:
+        assert "ANTHROPIC_API_KEY" in result.output or "api_key" in result.output.lower()
+
+
 def test_bootstrap_missing_api_key_freeform_clean_error(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

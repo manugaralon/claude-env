@@ -9,7 +9,7 @@ from rich.console import Console
 app = typer.Typer(help="Generate calibrated Claude Code environments.")
 console = Console()
 
-_TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
+_TEMPLATES_DIR = Path(__file__).parent / "data"
 _PROFILES_DIR = Path(__file__).parent / "profiles"
 
 _SKILL_MD_CONTENT = """\
@@ -34,25 +34,37 @@ Generate the project's `.claude/` environment layer by running the claude-env CL
    claude-env version
    ```
 
-2. Run bootstrap in the current project directory:
+2. Ask the user: "What is this project? Give me a one-line description."
+
+3. Run bootstrap with the description (non-interactive, no LLM call needed
+   if a spec file exists — use `--spec` instead of `--description` when one is present):
+
+   Dry-run first to preview:
 
    ```bash
-   claude-env bootstrap
+   claude-env bootstrap --description "DESCRIPTION" --dry-run
    ```
 
-   Or with a spec file (no LLM call):
+   Then write for real:
+
+   ```bash
+   claude-env bootstrap --description "DESCRIPTION"
+   ```
+
+   Or with a spec file (skips the LLM entirely):
 
    ```bash
    claude-env bootstrap --spec ./spec.yaml
    ```
 
-   Or dry-run to preview what would be written:
+4. Report which files were written and confirm the `.claude/` layer exists.
 
-   ```bash
-   claude-env bootstrap --dry-run
-   ```
+## Notes
 
-3. Report which files were written and confirm the `.claude/` layer exists.
+- Never run `claude-env bootstrap` without `--description` or `--spec` — it will
+  block on an interactive prompt that cannot complete inside a Bash tool call.
+- `--description` triggers an LLM call (requires ANTHROPIC_API_KEY). If the key
+  is missing, fall back to `--spec` with a minimal YAML spec you generate yourself.
 """
 
 
@@ -117,6 +129,9 @@ def bootstrap(
     spec_file: Path | None = typer.Option(
         None, "--spec", "-s", help="Path to YAML or Markdown spec file (skips LLM)"
     ),
+    description: str | None = typer.Option(
+        None, "--description", "-d", help="One-line project description (skips interactive prompt)"
+    ),
     dry_run: bool = typer.Option(
         False, "--dry-run", help="Print files that would be written without writing"
     ),
@@ -137,7 +152,8 @@ def bootstrap(
             normalizer = InputNormalizer()
             spec = normalizer.from_spec_file(spec_file.resolve())
         else:
-            description = typer.prompt("Describe your project")
+            if description is None:
+                description = typer.prompt("Describe your project")
             normalizer = InputNormalizer()  # constructs anthropic.Anthropic() — needs key
             spec = normalizer.from_freeform(description)
     except Exception as exc:

@@ -30,6 +30,9 @@ dev = [
 [tool.hatch.build.targets.wheel]
 packages = ["claude_env"]
 
+[tool.hatch.build.targets.wheel.force-include]
+"claude_env/data" = "claude_env/data"
+
 [tool.ruff]
 target-version = "py312"
 line-length = 100
