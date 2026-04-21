@@ -151,11 +151,14 @@ def bootstrap(
         if spec_file is not None:
             normalizer = InputNormalizer()
             spec = normalizer.from_spec_file(spec_file.resolve())
+        elif description is not None:
+            # Build ProjectSpec directly — no LLM call, no API key needed.
+            from claude_env.models.project_spec import ProjectSpec
+            spec = ProjectSpec(name=project_root.name or "project", description=description)
         else:
-            if description is None:
-                description = typer.prompt("Describe your project")
+            desc = typer.prompt("Describe your project")
             normalizer = InputNormalizer()  # constructs anthropic.Anthropic() — needs key
-            spec = normalizer.from_freeform(description)
+            spec = normalizer.from_freeform(desc)
     except Exception as exc:
         msg = str(exc).lower()
         if "api_key" in msg or "authentication" in msg or "anthropic_api_key" in msg:
