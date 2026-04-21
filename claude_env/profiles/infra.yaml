@@ -6,13 +6,16 @@ skill_slugs:
   - plan-apply
   - validate-manifest
   - run-lint
+  - quality-gate
 agent_slugs:
   - security-reviewer
   - cost-reviewer
+  - advisor
 claude_md_sections:
   - plan_execute_verify
   - context_management
   - lessons_loop
+  - delegate_prompting
   - demand_elegance
   - autonomous_bug_fixing
   - core_principles

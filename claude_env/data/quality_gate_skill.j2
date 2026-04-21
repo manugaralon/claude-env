@@ -1,0 +1,24 @@
+---
+name: quality-gate
+description: Run all 5 quality gates — nothing ships without passing lint, type check, build, secrets scan, and tests
+allowed-tools: Bash
+---
+
+# Quality Gate
+
+Run before marking any task done. Nothing ships without passing all 5 gates.
+
+## Gates
+
+1. **Lint** — no style errors (`ruff check .` / `eslint .` / equivalent for the project stack)
+2. **Type Check** — no type mismatches (`mypy` / `tsc --noEmit` / equivalent)
+3. **Build Clean** — compiles without error (`python -m build` / `npm run build` / equivalent)
+4. **Secrets Scan** — no credentials or tokens exposed (review `git diff --cached` for any hardcoded secrets)
+5. **Test Suite** — all tests green (`pytest` / `npm test` / equivalent)
+
+## Steps
+
+1. Detect the project's toolchain from `pyproject.toml`, `package.json`, or equivalent config file.
+2. Run each gate in order. On first failure: stop, fix, re-run that gate before continuing.
+3. Report each gate as **PASS** or **FAIL** with the relevant command and output.
+4. Only report the task done when all 5 are **PASS**.

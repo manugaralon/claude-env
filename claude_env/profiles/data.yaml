@@ -6,13 +6,16 @@ skill_slugs:
   - run-pipeline
   - validate-schema
   - profile-data
+  - quality-gate
 agent_slugs:
   - data-quality-reviewer
   - schema-auditor
+  - advisor
 claude_md_sections:
   - plan_execute_verify
   - context_management
   - lessons_loop
+  - delegate_prompting
   - demand_elegance
   - autonomous_bug_fixing
   - core_principles

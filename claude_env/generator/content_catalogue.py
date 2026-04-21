@@ -34,6 +34,11 @@ _SKILL_CATALOGUE: dict[str, dict[str, str]] = {
         "description": "Scaffold a new CLI subcommand with help text and tests",
         "invocation": "/add-subcommand",
     },
+    "quality-gate": {
+        "skill_name": "quality-gate",
+        "description": "Run all 5 quality gates — lint, type check, build, secrets scan, tests",
+        "invocation": "/quality-gate",
+    },
 }
 
 _AGENT_CATALOGUE: dict[str, dict[str, object]] = {
@@ -51,6 +56,14 @@ _AGENT_CATALOGUE: dict[str, dict[str, object]] = {
         "agent_name": "cli-ux-reviewer",
         "description": "Review CLI commands for usability, help text clarity, and ergonomics",
         "skills": ["fix-issue", "add-subcommand"],
+    },
+    "advisor": {
+        "agent_name": "advisor",
+        "description": (
+            "Senior advisor for hard decisions — architecture, security, complex refactors. "
+            "Invoked by the Worker (Sonnet) when the cost of getting it wrong is high."
+        ),
+        "skills": [],
     },
 }
 

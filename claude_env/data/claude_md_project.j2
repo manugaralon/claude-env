@@ -61,6 +61,17 @@ When given a bug report: fix it. Don't ask for hand-holding.
 - **No Laziness** — find root causes. No temporary fixes. Senior developer standards.
 - **Minimal Impact** — only touch what the current task requires. No side effects, no unrelated cleanup.
 {% endif %}
+{% if "delegate_prompting" in sections %}
+## Task Delegation
+
+When handed a task, treat it as a full delegation — not a starting point for clarification.
+
+Extract from the prompt: the task, constraints, relevant files, and definition of done.
+Then carry the work through to completion without check-ins.
+
+Interrupt only when you hit a genuine blocker that cannot be resolved without the user's input.
+If critical information is missing, ask once — then execute.
+{% endif %}
 {% if "mobile_first" in sections %}
 ## Mobile-First UI
 

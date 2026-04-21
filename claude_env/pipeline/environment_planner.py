@@ -5,6 +5,14 @@ from claude_env.models.domain_profile import DomainProfile
 from claude_env.models.generation_plan import Artifact, GenerationPlan, OutputLayer
 from claude_env.models.project_spec import ProjectSpec
 
+_SKILL_TEMPLATE_MAP: dict[str, str] = {
+    "quality-gate": "quality_gate_skill.j2",
+}
+
+_AGENT_TEMPLATE_MAP: dict[str, str] = {
+    "advisor": "advisor_agent.j2",
+}
+
 
 def plan(
     spec: ProjectSpec,
@@ -46,7 +54,7 @@ def plan(
         artifacts.append(
             Artifact(
                 target_path=f"skills/{slug}/SKILL.md",
-                template_id="skill_stub.j2",
+                template_id=_SKILL_TEMPLATE_MAP.get(slug, "skill_stub.j2"),
                 context={"slug": slug, "domain": profile.domain},
                 layer=OutputLayer.PROJECT,
             )
@@ -57,7 +65,7 @@ def plan(
         artifacts.append(
             Artifact(
                 target_path=f"agents/{slug}.md",
-                template_id="agent_stub.j2",
+                template_id=_AGENT_TEMPLATE_MAP.get(slug, "agent_stub.j2"),
                 context={"slug": slug, "domain": profile.domain},
                 layer=OutputLayer.PROJECT,
             )
