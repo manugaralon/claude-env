@@ -14,7 +14,7 @@ _PROFILES_DIR = Path(__file__).parent / "profiles"
 
 _SKILL_MD_CONTENT = """\
 ---
-name: bootstrap
+name: claude-env
 description: >-
   Generate a complete .claude/ environment layer for the current project using claude-env.
   Use when bootstrapping a new project, re-running environment generation, or installing
@@ -61,7 +61,7 @@ def _install_bootstrap_skill(global_root: Path) -> Path:
 
     Always overwrites. Returns the absolute path written.
     """
-    target = global_root / "skills" / "claude-env" / "bootstrap" / "SKILL.md"
+    target = global_root / "skills" / "claude-env" / "SKILL.md"
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(_SKILL_MD_CONTENT, encoding="utf-8")
     return target
