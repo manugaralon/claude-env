@@ -13,6 +13,9 @@ claude_md_sections:
   - plan_execute_verify
   - context_management
   - lessons_loop
+  - demand_elegance
+  - autonomous_bug_fixing
+  - core_principles
   - schema_contracts
 hook_templates:
   - lint_after_edit

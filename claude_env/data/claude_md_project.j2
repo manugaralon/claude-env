@@ -7,9 +7,9 @@
 
 For any task with 3+ steps or an architectural decision:
 
-1. **Plan** — outline the approach before writing code. List steps and verification points.
-2. **Execute** — implement the plan step by step. Stop and replan if something breaks.
-3. **Verify** — run tests and the linter, confirm behavior matches the spec.
+1. **Plan** — outline the approach before writing code. List steps and verification points. Write detailed specs upfront to reduce ambiguity. If something goes sideways mid-task, stop and replan immediately.
+2. **Execute** — implement the plan step by step.
+3. **Verify** — nothing ships without passing all quality gates: lint clean, type check passing, build succeeds, no secrets exposed, tests green. Run tests, check logs, demonstrate correctness. Ask yourself: "Would a staff engineer approve this?"
 
 Never mark a task done without demonstrating it works.
 {% endif %}
@@ -18,19 +18,48 @@ Never mark a task done without demonstrating it works.
 
 - Run `/compact` before context degrades, not during a long task.
   Instruct: "preserve architecture decisions, chosen stack, and agreed patterns."
-- Delegate exploration and research to subagents — keep the main context for decisions.
+- Use subagents liberally to keep the main context window clean.
+- Offload research, exploration, and parallel analysis to subagents — one task per subagent.
+- For complex problems, throw more compute at it via subagents.
 - Never let subagent outputs accumulate in the main context; write them to files.
 {% endif %}
 {% if "lessons_loop" in sections %}
-## Continuous Improvement
+## Self-Improvement Loop
 
-After every correction, append to `lessons.md`:
+After any correction from the user, append to `lessons.md`:
 
 ```
 - [date] pattern: <what failed>, fix: <how to prevent it>
 ```
 
-Review `lessons.md` at the start of each session on this project.
+- Write rules for yourself that prevent the same mistake from recurring.
+- Ruthlessly iterate on these lessons until the mistake rate drops.
+- Review `lessons.md` at the start of each session on this project.
+{% endif %}
+{% if "demand_elegance" in sections %}
+## Demand Elegance
+
+For non-trivial changes, pause before presenting and ask: "Is there a more elegant solution?"
+
+- If a fix feels hacky, think: "Knowing everything I know now, implement the elegant solution."
+- Skip this for simple, obvious fixes — don't over-engineer.
+- Challenge your own work before presenting it.
+{% endif %}
+{% if "autonomous_bug_fixing" in sections %}
+## Autonomous Bug Fixing
+
+When given a bug report: fix it. Don't ask for hand-holding.
+
+- Point at logs, errors, and failing tests — then resolve them.
+- Zero context switching required from the user.
+- Go fix failing CI tests without being told how.
+{% endif %}
+{% if "core_principles" in sections %}
+## Core Principles
+
+- **Simplicity First** — make every change as simple as possible. Impact minimal code.
+- **No Laziness** — find root causes. No temporary fixes. Senior developer standards.
+- **Minimal Impact** — only touch what the current task requires. No side effects, no unrelated cleanup.
 {% endif %}
 {% if "mobile_first" in sections %}
 ## Mobile-First UI
