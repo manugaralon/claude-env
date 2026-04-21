@@ -39,6 +39,11 @@ _SKILL_CATALOGUE: dict[str, dict[str, str]] = {
         "description": "Run all 5 quality gates — lint, type check, build, secrets scan, tests",
         "invocation": "/quality-gate",
     },
+    "karpathy-guidelines": {
+        "skill_name": "karpathy-guidelines",
+        "description": "Apply Karpathy's 4 coding principles: think before coding, simplicity, surgical changes, goal-driven execution",
+        "invocation": "/karpathy-guidelines",
+    },
 }
 
 _AGENT_CATALOGUE: dict[str, dict[str, object]] = {

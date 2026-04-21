@@ -7,11 +7,13 @@ skill_slugs:
   - run-lint
   - update-deps
   - quality-gate
+  - karpathy-guidelines
 agent_slugs:
   - security-reviewer
   - accessibility-auditor
   - advisor
 claude_md_sections:
+  - think_before_coding
   - mobile_first
   - plan_execute_verify
   - context_management

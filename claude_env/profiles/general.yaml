@@ -6,11 +6,13 @@ skill_slugs:
   - create-pr
   - run-lint
   - quality-gate
+  - karpathy-guidelines
 agent_slugs:
   - code-reviewer
   - security-reviewer
   - advisor
 claude_md_sections:
+  - think_before_coding
   - plan_execute_verify
   - context_management
   - lessons_loop

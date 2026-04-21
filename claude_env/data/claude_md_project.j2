@@ -2,14 +2,31 @@
 
 **Domain:** {{ domain }}
 
+{% if "think_before_coding" in sections %}
+## Think Before Coding
+
+Before implementing anything:
+
+- State your assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them — don't pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, stop. Name what's confusing. Ask.
+
+Don't assume. Don't hide confusion. Surface tradeoffs.
+{% endif %}
 {% if "plan_execute_verify" in sections %}
 ## Workflow: Plan, Execute, Verify
 
 For any task with 3+ steps or an architectural decision:
 
-1. **Plan** — outline the approach before writing code. List steps and verification points. Write detailed specs upfront to reduce ambiguity. If something goes sideways mid-task, stop and replan immediately.
-2. **Execute** — implement the plan step by step.
-3. **Verify** — nothing ships without passing all quality gates: lint clean, type check passing, build succeeds, no secrets exposed, tests green. Run tests, check logs, demonstrate correctness. Ask yourself: "Would a staff engineer approve this?"
+1. **Plan** — outline the approach before writing code. Transform the task into verifiable goals:
+   ```
+   1. [Step] → verify: [check]
+   2. [Step] → verify: [check]
+   ```
+   Write specs upfront to reduce ambiguity. If something goes sideways mid-task, stop and replan.
+2. **Execute** — implement step by step. Strong success criteria let you loop independently.
+3. **Verify** — nothing ships without passing all quality gates: lint clean, type check passing, build succeeds, no secrets exposed, tests green. Ask yourself: "Would a staff engineer approve this?"
 
 Never mark a task done without demonstrating it works.
 {% endif %}

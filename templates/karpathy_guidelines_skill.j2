@@ -1,0 +1,54 @@
+---
+name: karpathy-guidelines
+description: >-
+  Apply Karpathy's 4 principles to reduce common LLM coding mistakes.
+  Use when writing, reviewing, or refactoring code to avoid overcomplication,
+  make surgical changes, surface assumptions, and define verifiable success criteria.
+allowed-tools: Bash
+---
+
+# Karpathy Guidelines
+
+Invoke before starting any non-trivial coding task to activate all 4 principles.
+
+## 1. Think Before Coding
+
+Before implementing, explicitly state:
+- Your assumptions (file format, scope, fields, error handling strategy)
+- If multiple interpretations exist, list them — don't pick silently
+- Whether a simpler approach exists
+- What is unclear — name it and ask
+
+## 2. Simplicity First
+
+Minimum code that solves the problem. Nothing speculative.
+
+- No features beyond what was asked
+- No abstractions for single-use code
+- No error handling for impossible scenarios
+- If you write 200 lines and it could be 50, rewrite it
+
+Ask: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+
+## 3. Surgical Changes
+
+When editing existing code:
+- Don't improve adjacent code, comments, or formatting
+- Don't refactor things that aren't broken
+- Match existing style, even if you'd do it differently
+- If you notice unrelated dead code, mention it — don't delete it
+
+When your changes create orphans: remove imports/variables/functions that YOUR changes made unused. Don't touch pre-existing dead code.
+
+## 4. Goal-Driven Execution
+
+Transform the task into verifiable goals before starting:
+
+```
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+3. [Step] → verify: [check]
+```
+
+For bug fixes: write a test that reproduces it first, then make it pass.
+Strong success criteria let you loop independently without constant clarification.

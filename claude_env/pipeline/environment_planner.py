@@ -7,6 +7,7 @@ from claude_env.models.project_spec import ProjectSpec
 
 _SKILL_TEMPLATE_MAP: dict[str, str] = {
     "quality-gate": "quality_gate_skill.j2",
+    "karpathy-guidelines": "karpathy_guidelines_skill.j2",
 }
 
 _AGENT_TEMPLATE_MAP: dict[str, str] = {
