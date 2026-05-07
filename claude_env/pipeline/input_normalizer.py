@@ -4,12 +4,16 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-
-import anthropic
-from anthropic.types import TextBlock
+from typing import TYPE_CHECKING
 
 from claude_env.models.project_spec import ProjectSpec
 from claude_env.pipeline.spec_parser import parse_markdown_spec, parse_yaml_spec
+
+# anthropic is only required for from_freeform() (the LLM path). Importing
+# it at module load would force every consumer (including --spec callers
+# that bypass the LLM) to install anthropic. Defer to method call sites.
+if TYPE_CHECKING:
+    import anthropic
 
 _LLM_MODEL = "claude-haiku-3-5-20241022"
 
@@ -40,10 +44,19 @@ class InputNormalizer:
     """Normalize project input (freeform text or spec file) into ProjectSpec."""
 
     def __init__(self, client: anthropic.Anthropic | None = None) -> None:
-        self._client = client or anthropic.Anthropic()
+        # Defer anthropic.Anthropic() construction until from_freeform() is
+        # actually called — from_spec_file() does not need an LLM client,
+        # and forcing the dep at __init__ time means --spec callers can't
+        # use the CLI without anthropic installed and configured.
+        self._client = client
 
     def from_freeform(self, text: str) -> ProjectSpec:
         """Extract ProjectSpec from freeform natural language text via LLM."""
+        from anthropic.types import TextBlock
+
+        if self._client is None:
+            import anthropic as _anthropic
+            self._client = _anthropic.Anthropic()
         message = self._client.messages.create(
             model=_LLM_MODEL,
             max_tokens=1024,

@@ -171,13 +171,39 @@ def bootstrap(
     dry_run: bool = typer.Option(
         False, "--dry-run", help="Print files that would be written without writing"
     ),
+    with_browser: bool = typer.Option(
+        False, "--with-browser", help="Add the playwright MCP server to .mcp.json"
+    ),
+    with_context7: bool = typer.Option(
+        False, "--with-context7", help="Add the context7 MCP server to .mcp.json"
+    ),
+    with_sequential_thinking: bool = typer.Option(
+        False, "--with-sequential-thinking",
+        help="Add the sequential-thinking MCP server to .mcp.json"
+    ),
+    with_claude_mem: bool = typer.Option(
+        False, "--with-claude-mem",
+        help="Print install hint for the claude-mem plugin (plugin, not MCP — user-scoped)"
+    ),
 ) -> None:
     """Generate .claude/ layer for the given project directory."""
     from claude_env.generator.generator import Generator, resolve_plan_paths
+    from claude_env.mcp_registry import resolve_plugin_hints
     from claude_env.pipeline.domain_classifier import classify, load_all_profiles
     from claude_env.pipeline.environment_planner import plan as make_plan
     from claude_env.pipeline.input_normalizer import InputNormalizer
     from claude_env.templates.registry import TemplateRegistry
+
+    mcp_slugs: list[str] = []
+    if with_browser:
+        mcp_slugs.append("browser")
+    if with_context7:
+        mcp_slugs.append("context7")
+    if with_sequential_thinking:
+        mcp_slugs.append("sequential-thinking")
+    plugin_slugs: list[str] = []
+    if with_claude_mem:
+        plugin_slugs.append("claude-mem")
 
     project_root = project_dir.resolve()
     global_root = Path.home() / ".claude"
@@ -204,18 +230,33 @@ def bootstrap(
                 "or pass [cyan]--spec path/to/spec.yaml[/cyan] to skip the LLM."
             )
             raise typer.Exit(1) from exc
+        if isinstance(exc, ModuleNotFoundError) and "anthropic" in msg:
+            console.print(
+                "[red]Error:[/red] the anthropic SDK is not installed "
+                "(needed for the freeform LLM path)."
+            )
+            console.print(
+                "Install with [cyan]pip install anthropic[/cyan] and set "
+                "[cyan]ANTHROPIC_API_KEY[/cyan], or pass "
+                "[cyan]--spec path/to/spec.yaml[/cyan] to skip the LLM."
+            )
+            raise typer.Exit(1) from exc
         raise
 
     profiles = load_all_profiles(_PROFILES_DIR)
     profile = classify(spec, profiles)
     console.print(f"Domain detected: [cyan]{profile.domain}[/cyan]")
 
-    generation_plan = make_plan(spec, profile, registry.list_templates())
+    generation_plan = make_plan(
+        spec, profile, registry.list_templates(), mcp_slugs=mcp_slugs
+    )
 
     if dry_run:
         console.print("[yellow]Dry run — no files written[/yellow]")
         for path in resolve_plan_paths(generation_plan, project_root, global_root):
             console.print(f"  [dim]would write[/dim] {path}")
+        for hint in resolve_plugin_hints(plugin_slugs):
+            console.print(f"  [dim]plugin[/dim] {hint}")
         return
 
     gen = Generator(registry)
@@ -224,6 +265,8 @@ def bootstrap(
     )
     for path in written:
         console.print(f"  [green]wrote[/green] {path}")
+    for hint in resolve_plugin_hints(plugin_slugs):
+        console.print(f"  [yellow]plugin →[/yellow] {hint}")
     console.print(f"[bold green]Done.[/bold green] {len(written)} files generated.")
 
 

@@ -92,6 +92,82 @@ def test_build_global_profile_kitchen_sink() -> None:
     assert profile.detection_signals == []  # never picked by classifier
 
 
+def test_bootstrap_with_browser_flag_writes_mcp_json(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import json
+
+    monkeypatch.setattr(Path, "home", lambda: tmp_path / "home")
+    spec = tmp_path / "spec.yaml"
+    shutil.copy(FIXTURES / "simple_web.yaml", spec)
+    project_dir = tmp_path / "proj"
+    project_dir.mkdir()
+    result = runner.invoke(
+        app, ["bootstrap", str(project_dir), "--spec", str(spec), "--with-browser"]
+    )
+    assert result.exit_code == 0, result.output
+    mcp = project_dir / ".mcp.json"
+    assert mcp.exists()
+    assert not (project_dir / ".claude" / ".mcp.json").exists()
+    data = json.loads(mcp.read_text())
+    assert "playwright" in data["mcpServers"]
+
+
+def test_bootstrap_combines_multiple_mcp_flags(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import json
+
+    monkeypatch.setattr(Path, "home", lambda: tmp_path / "home")
+    spec = tmp_path / "spec.yaml"
+    shutil.copy(FIXTURES / "simple_web.yaml", spec)
+    project_dir = tmp_path / "proj"
+    project_dir.mkdir()
+    result = runner.invoke(
+        app,
+        ["bootstrap", str(project_dir), "--spec", str(spec),
+         "--with-browser", "--with-context7", "--with-sequential-thinking"],
+    )
+    assert result.exit_code == 0, result.output
+    data = json.loads((project_dir / ".mcp.json").read_text())
+    assert set(data["mcpServers"].keys()) == {
+        "playwright", "context7", "sequential-thinking"
+    }
+
+
+def test_bootstrap_no_mcp_flags_no_mcp_json(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(Path, "home", lambda: tmp_path / "home")
+    spec = tmp_path / "spec.yaml"
+    shutil.copy(FIXTURES / "simple_web.yaml", spec)
+    project_dir = tmp_path / "proj"
+    project_dir.mkdir()
+    result = runner.invoke(
+        app, ["bootstrap", str(project_dir), "--spec", str(spec)]
+    )
+    assert result.exit_code == 0, result.output
+    assert not (project_dir / ".mcp.json").exists()
+
+
+def test_bootstrap_with_claude_mem_emits_plugin_hint_no_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """claude-mem is a plugin, not an MCP — surfaces guidance, no .mcp.json."""
+    monkeypatch.setattr(Path, "home", lambda: tmp_path / "home")
+    spec = tmp_path / "spec.yaml"
+    shutil.copy(FIXTURES / "simple_web.yaml", spec)
+    project_dir = tmp_path / "proj"
+    project_dir.mkdir()
+    result = runner.invoke(
+        app, ["bootstrap", str(project_dir), "--spec", str(spec), "--with-claude-mem"]
+    )
+    assert result.exit_code == 0, result.output
+    assert "claude-mem" in result.output
+    assert "plugin" in result.output.lower()
+    assert not (project_dir / ".mcp.json").exists()
+
+
 def test_bootstrap_with_spec_file_writes_project_layer(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

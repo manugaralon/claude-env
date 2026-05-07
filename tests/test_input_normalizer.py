@@ -5,10 +5,16 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-from anthropic.types import TextBlock
 
-from claude_env.models.project_spec import ProjectSpec
-from claude_env.pipeline.spec_parser import parse_markdown_spec, parse_yaml_spec
+# Skip the entire file if the anthropic SDK is not installed — these tests
+# exercise the LLM-mediated freeform path, which has no meaningful behavior
+# without the SDK present.
+pytest.importorskip("anthropic")
+
+from anthropic.types import TextBlock  # noqa: E402
+
+from claude_env.models.project_spec import ProjectSpec  # noqa: E402
+from claude_env.pipeline.spec_parser import parse_markdown_spec, parse_yaml_spec  # noqa: E402
 
 FIXTURES = Path(__file__).parent / "fixtures" / "specs"
 

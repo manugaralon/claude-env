@@ -31,6 +31,8 @@ def resolve_plan_paths(
     for artifact in plan.artifacts:
         if artifact.layer == OutputLayer.PROJECT:
             layer_root = project_root / ".claude"
+        elif artifact.layer == OutputLayer.PROJECT_ROOT:
+            layer_root = project_root
         else:
             layer_root = global_root
         target = (layer_root / artifact.target_path).resolve()
@@ -99,7 +101,7 @@ class Generator:
                 else:
                     final_content = wrap_with_sentinel(rendered_content)
             else:
-                # OutputLayer.PROJECT — plain overwrite, no sentinel
+                # PROJECT or PROJECT_ROOT — plain overwrite, no sentinel
                 final_content = rendered_content
 
             target.parent.mkdir(parents=True, exist_ok=True)

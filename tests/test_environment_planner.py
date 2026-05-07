@@ -95,6 +95,49 @@ def test_plan_no_sidecars_for_simple_skills():
     assert paths == ["skills/fix-issue/SKILL.md"]
 
 
+# ---------------------------------------------------------------------------
+# MCP server emission
+# ---------------------------------------------------------------------------
+
+
+def _mcp_templates() -> list[str]:
+    return _TEMPLATES + ["mcp_json.j2"]
+
+
+def test_plan_no_mcp_artifact_when_no_slugs():
+    profile = _make_profile("web", ["fix-issue"], [])
+    result = plan(_make_spec(), profile, _mcp_templates(), mcp_slugs=None)
+    assert not any(a.target_path == ".mcp.json" for a in result.artifacts)
+
+
+def test_plan_no_mcp_artifact_when_only_unknown_slugs():
+    profile = _make_profile("web", ["fix-issue"], [])
+    result = plan(_make_spec(), profile, _mcp_templates(), mcp_slugs=["nonexistent"])
+    assert not any(a.target_path == ".mcp.json" for a in result.artifacts)
+
+
+def test_plan_emits_mcp_artifact_at_project_root():
+    profile = _make_profile("web", ["fix-issue"], [])
+    result = plan(_make_spec(), profile, _mcp_templates(), mcp_slugs=["browser"])
+    mcp_artifact = next(a for a in result.artifacts if a.target_path == ".mcp.json")
+    assert mcp_artifact.layer == OutputLayer.PROJECT_ROOT
+    assert mcp_artifact.template_id == "mcp_json.j2"
+    servers = mcp_artifact.context["servers"]
+    assert isinstance(servers, list) and len(servers) == 1
+    assert servers[0]["name"] == "playwright"
+
+
+def test_plan_mcp_preserves_slug_order():
+    profile = _make_profile("web", ["fix-issue"], [])
+    result = plan(
+        _make_spec(), profile, _mcp_templates(),
+        mcp_slugs=["context7", "browser"],
+    )
+    mcp_artifact = next(a for a in result.artifacts if a.target_path == ".mcp.json")
+    server_names = [s["name"] for s in mcp_artifact.context["servers"]]
+    assert server_names == ["context7", "playwright"]
+
+
 def test_plan_produces_agent_artifacts():
     result = plan(_make_spec(), _PROFILE, _TEMPLATES)
     agent_artifacts = [a for a in result.artifacts if a.target_path.startswith("agents/")]

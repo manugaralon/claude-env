@@ -11,6 +11,9 @@ class OutputLayer(StrEnum):
 
     GLOBAL = "global"
     PROJECT = "project"
+    # PROJECT_ROOT writes outside .claude/ — at the project root itself.
+    # Used for files Claude Code reads from the repo root (e.g. .mcp.json).
+    PROJECT_ROOT = "project_root"
 
 
 class Artifact(BaseModel):

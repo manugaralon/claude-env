@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    {%- for server in servers %}
+    {{ server.name | tojson }}: {
+      "type": "stdio",
+      "command": {{ server.command | tojson }},
+      "args": {{ server.args | tojson }},
+      "env": {}
+    }{% if not loop.last %},{% endif %}
+    {%- endfor %}
+  }
+}

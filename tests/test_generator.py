@@ -356,3 +356,69 @@ def test_sidecar_content_non_empty(
         tmp_path / ".claude/skills/grill-with-docs/CONTEXT-FORMAT.md"
     ).read_text(encoding="utf-8")
     assert len(context_format) > 100  # not an empty stub
+
+
+# ---------------------------------------------------------------------------
+# GEN-08: PROJECT_ROOT layer (.mcp.json)
+# ---------------------------------------------------------------------------
+
+
+def _mcp_plan(servers: list[dict[str, object]]) -> GenerationPlan:
+    return GenerationPlan(
+        project_name="mcp-proj",
+        domain="web",
+        artifacts=[
+            Artifact(
+                target_path=".mcp.json",
+                template_id="mcp_json.j2",
+                context={"servers": servers},
+                layer=OutputLayer.PROJECT_ROOT,
+            )
+        ],
+    )
+
+
+def test_mcp_json_written_at_project_root(tmp_path: Path, real_registry) -> None:
+    plan = _mcp_plan([
+        {"name": "playwright", "command": "npx",
+         "args": ["-y", "@playwright/mcp@latest"]},
+    ])
+    Generator(real_registry).execute(plan, tmp_path, tmp_path / "global")
+    target = tmp_path / ".mcp.json"
+    assert target.exists()
+    # Critical: NOT inside .claude/ (Claude Code reads project-MCPs from root)
+    assert not (tmp_path / ".claude" / ".mcp.json").exists()
+
+
+def test_mcp_json_is_valid_json(tmp_path: Path, real_registry) -> None:
+    plan = _mcp_plan([
+        {"name": "playwright", "command": "npx",
+         "args": ["-y", "@playwright/mcp@latest"]},
+        {"name": "context7", "command": "npx",
+         "args": ["-y", "@upstash/context7-mcp@latest"]},
+    ])
+    Generator(real_registry).execute(plan, tmp_path, tmp_path / "global")
+    data = json.loads((tmp_path / ".mcp.json").read_text(encoding="utf-8"))
+    assert set(data["mcpServers"].keys()) == {"playwright", "context7"}
+    assert data["mcpServers"]["playwright"]["type"] == "stdio"
+    assert data["mcpServers"]["playwright"]["command"] == "npx"
+    assert data["mcpServers"]["playwright"]["args"] == ["-y", "@playwright/mcp@latest"]
+
+
+def test_project_root_layer_path_traversal_blocked(
+    tmp_path: Path, real_registry
+) -> None:
+    plan = GenerationPlan(
+        project_name="evil",
+        domain="web",
+        artifacts=[
+            Artifact(
+                target_path="../escape.json",
+                template_id="mcp_json.j2",
+                context={"servers": []},
+                layer=OutputLayer.PROJECT_ROOT,
+            )
+        ],
+    )
+    with pytest.raises(ValueError, match="Path traversal"):
+        Generator(real_registry).execute(plan, tmp_path, tmp_path / "global")
