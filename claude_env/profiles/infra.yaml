@@ -3,6 +3,7 @@ display_name: Infrastructure as Code
 description: Deployment, infrastructure provisioning, or platform-engineering project
 skill_slugs:
   - fix-issue
+  - update-deps
   - plan-apply
   - validate-manifest
   - run-lint

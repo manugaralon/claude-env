@@ -3,6 +3,7 @@ display_name: Data Pipeline
 description: ETL, analytics, or data-processing project with structured inputs and outputs
 skill_slugs:
   - fix-issue
+  - update-deps
   - run-pipeline
   - validate-schema
   - profile-data

@@ -5,6 +5,7 @@ skill_slugs:
   - fix-issue
   - create-pr
   - run-lint
+  - update-deps
   - quality-gate
   - karpathy-guidelines
   - llm-council
@@ -14,6 +15,7 @@ skill_slugs:
   - brainstorming
   - verification-before-completion
   - writing-plans
+  - improve-codebase-architecture
 agent_slugs:
   - code-reviewer
   - security-reviewer
