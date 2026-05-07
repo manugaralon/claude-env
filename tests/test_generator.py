@@ -302,3 +302,57 @@ def test_creates_parent_dirs(tmp_path: Path, real_registry, web_plan: Generation
     gen = Generator(real_registry)
     gen.execute(web_plan, tmp_path, tmp_path / "global")
     assert (tmp_path / ".claude/skills/fix-issue").is_dir()
+
+
+# ---------------------------------------------------------------------------
+# GEN-07: Skill sidecar emission
+# ---------------------------------------------------------------------------
+
+
+def test_tdd_sidecars_written(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
+    gen = Generator(real_registry)
+    gen.execute(web_plan, tmp_path, tmp_path / "global")
+    tdd_dir = tmp_path / ".claude/skills/tdd"
+    for sidecar in ("tests.md", "mocking.md", "refactoring.md",
+                    "deep-modules.md", "interface-design.md"):
+        assert (tdd_dir / sidecar).exists(), f"Missing sidecar: {sidecar}"
+
+
+def test_grill_sidecars_written(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
+    gen = Generator(real_registry)
+    gen.execute(web_plan, tmp_path, tmp_path / "global")
+    grill_dir = tmp_path / ".claude/skills/grill-with-docs"
+    assert (grill_dir / "CONTEXT-FORMAT.md").exists()
+    assert (grill_dir / "ADR-FORMAT.md").exists()
+
+
+def test_sidecar_content_resolves_skill_md_links(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
+    """SKILL.md links like [tests.md](tests.md) must resolve to a real file."""
+    gen = Generator(real_registry)
+    gen.execute(web_plan, tmp_path, tmp_path / "global")
+    skill_md = (tmp_path / ".claude/skills/tdd/SKILL.md").read_text(encoding="utf-8")
+    for sidecar in ("tests.md", "mocking.md", "refactoring.md",
+                    "deep-modules.md", "interface-design.md"):
+        # SKILL.md must reference the sidecar (else the sidecar is dead weight)
+        assert sidecar in skill_md, f"SKILL.md should reference {sidecar}"
+        # And the sidecar must actually exist on disk
+        assert (tmp_path / ".claude/skills/tdd" / sidecar).exists()
+
+
+def test_sidecar_content_non_empty(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
+    gen = Generator(real_registry)
+    gen.execute(web_plan, tmp_path, tmp_path / "global")
+    tests_md = (tmp_path / ".claude/skills/tdd/tests.md").read_text(encoding="utf-8")
+    assert "Good" in tests_md and "Bad" in tests_md  # canonical headings
+    context_format = (
+        tmp_path / ".claude/skills/grill-with-docs/CONTEXT-FORMAT.md"
+    ).read_text(encoding="utf-8")
+    assert len(context_format) > 100  # not an empty stub

@@ -23,6 +23,26 @@ _AGENT_TEMPLATE_MAP: dict[str, str] = {
     "advisor": "advisor_agent.j2",
 }
 
+# Skills that ship sidecar files alongside SKILL.md.
+# Each entry maps the skill slug to a list of (sidecar_filename, template_id)
+# tuples. The sidecar is rendered into skills/<slug>/<sidecar_filename>.
+# Sidecars exist because cherry-picked atomic skills (mattpocock, superpowers)
+# split their content across multiple files; without these, the SKILL.md
+# bodies link to files that never get emitted.
+_SKILL_SIDECARS: dict[str, list[tuple[str, str]]] = {
+    "tdd": [
+        ("tests.md", "tdd_tests_sidecar.j2"),
+        ("mocking.md", "tdd_mocking_sidecar.j2"),
+        ("refactoring.md", "tdd_refactoring_sidecar.j2"),
+        ("deep-modules.md", "tdd_deep_modules_sidecar.j2"),
+        ("interface-design.md", "tdd_interface_design_sidecar.j2"),
+    ],
+    "grill-with-docs": [
+        ("CONTEXT-FORMAT.md", "grill_context_format_sidecar.j2"),
+        ("ADR-FORMAT.md", "grill_adr_format_sidecar.j2"),
+    ],
+}
+
 
 def plan(
     spec: ProjectSpec,
@@ -84,7 +104,7 @@ def plan(
         )
     )
 
-    # Skills
+    # Skills (and any sidecars they ship with)
     for slug in profile.skill_slugs:
         artifacts.append(
             Artifact(
@@ -94,6 +114,15 @@ def plan(
                 layer=OutputLayer.PROJECT,
             )
         )
+        for sidecar_name, sidecar_template in _SKILL_SIDECARS.get(slug, []):
+            artifacts.append(
+                Artifact(
+                    target_path=f"skills/{slug}/{sidecar_name}",
+                    template_id=sidecar_template,
+                    context={"slug": slug, "domain": profile.domain},
+                    layer=OutputLayer.PROJECT,
+                )
+            )
 
     # Agents
     for slug in profile.agent_slugs:

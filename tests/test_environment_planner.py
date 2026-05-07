@@ -35,6 +35,10 @@ _TEMPLATES = [
     "grill_with_docs_skill.j2", "tdd_skill.j2", "systematic_debugging_skill.j2",
     "brainstorming_skill.j2", "verification_before_completion_skill.j2",
     "writing_plans_skill.j2", "improve_codebase_architecture_skill.j2",
+    # Sidecars shipped with cherry-picked skills
+    "tdd_tests_sidecar.j2", "tdd_mocking_sidecar.j2", "tdd_refactoring_sidecar.j2",
+    "tdd_deep_modules_sidecar.j2", "tdd_interface_design_sidecar.j2",
+    "grill_context_format_sidecar.j2", "grill_adr_format_sidecar.j2",
 ]
 _PROFILE = _make_profile("web", ["fix-issue", "create-pr"], ["security-reviewer"])
 
@@ -49,10 +53,46 @@ def test_plan_produces_claude_md_artifact():
 def test_plan_produces_skill_artifacts():
     result = plan(_make_spec(), _PROFILE, _TEMPLATES)
     skill_artifacts = [a for a in result.artifacts if a.target_path.startswith("skills/")]
+    # _PROFILE has fix-issue and create-pr — neither has sidecars, so 1 SKILL.md each
     assert len(skill_artifacts) == len(_PROFILE.skill_slugs)
     for artifact in skill_artifacts:
         assert artifact.template_id == "skill_stub.j2"
         assert "/SKILL.md" in artifact.target_path
+
+
+def test_plan_emits_tdd_sidecars():
+    profile = _make_profile("web", ["tdd"], [])
+    result = plan(_make_spec(), profile, _TEMPLATES)
+    paths = {a.target_path for a in result.artifacts if a.target_path.startswith("skills/tdd/")}
+    assert paths == {
+        "skills/tdd/SKILL.md",
+        "skills/tdd/tests.md",
+        "skills/tdd/mocking.md",
+        "skills/tdd/refactoring.md",
+        "skills/tdd/deep-modules.md",
+        "skills/tdd/interface-design.md",
+    }
+
+
+def test_plan_emits_grill_sidecars():
+    profile = _make_profile("web", ["grill-with-docs"], [])
+    result = plan(_make_spec(), profile, _TEMPLATES)
+    paths = {
+        a.target_path for a in result.artifacts
+        if a.target_path.startswith("skills/grill-with-docs/")
+    }
+    assert paths == {
+        "skills/grill-with-docs/SKILL.md",
+        "skills/grill-with-docs/CONTEXT-FORMAT.md",
+        "skills/grill-with-docs/ADR-FORMAT.md",
+    }
+
+
+def test_plan_no_sidecars_for_simple_skills():
+    profile = _make_profile("web", ["fix-issue"], [])
+    result = plan(_make_spec(), profile, _TEMPLATES)
+    paths = [a.target_path for a in result.artifacts if a.target_path.startswith("skills/")]
+    assert paths == ["skills/fix-issue/SKILL.md"]
 
 
 def test_plan_produces_agent_artifacts():
@@ -98,8 +138,14 @@ def test_plan_with_real_web_profile():
     profiles_dir = Path(__file__).parent.parent / "claude_env" / "profiles"
     web_profile = load_profile(profiles_dir / "web.yaml")
     result = plan(_make_spec("real-project"), web_profile, _TEMPLATES)
-    # 3 fixed (CLAUDE.md, CONTEXT.md, docs/adr/README.md) + per-skill + per-agent
-    expected_count = 3 + len(web_profile.skill_slugs) + len(web_profile.agent_slugs)
+    # 3 fixed (CLAUDE.md, CONTEXT.md, docs/adr/README.md) + per-skill + per-agent + sidecars.
+    # Web profile ships tdd (5 sidecars) and grill-with-docs (2 sidecars).
+    sidecar_count = (5 if "tdd" in web_profile.skill_slugs else 0) + (
+        2 if "grill-with-docs" in web_profile.skill_slugs else 0
+    )
+    expected_count = (
+        3 + len(web_profile.skill_slugs) + len(web_profile.agent_slugs) + sidecar_count
+    )
     assert len(result.artifacts) == expected_count
     assert result.project_name == "real-project"
     assert result.domain == "web"
