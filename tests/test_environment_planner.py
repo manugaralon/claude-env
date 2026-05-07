@@ -164,6 +164,46 @@ def test_plan_emits_qg_marker_when_requested():
     assert marker.template_id == "quality_gate_marker.j2"
 
 
+# ---------------------------------------------------------------------------
+# Profile / catalogue consistency — regression guard
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "profile_filename",
+    ["cli.yaml", "data.yaml", "general.yaml", "infra.yaml", "web.yaml"],
+)
+def test_profile_slugs_all_in_catalogue(profile_filename: str):
+    """Every skill/agent slug a profile declares must exist in the catalogue.
+
+    Otherwise the planner emits hollow `Perform <slug> tasks` stubs that
+    pollute the user's .claude/skills/ with unhelpful placeholders. If a
+    domain wants a new skill, author its catalogue entry first.
+    """
+    from claude_env.generator.content_catalogue import (
+        known_agent_slugs,
+        known_skill_slugs,
+    )
+    from claude_env.models.domain_profile import load_profile
+
+    profiles_dir = Path(__file__).parent.parent / "claude_env" / "profiles"
+    profile = load_profile(profiles_dir / profile_filename)
+    cat_skills = set(known_skill_slugs())
+    cat_agents = set(known_agent_slugs())
+
+    orphan_skills = set(profile.skill_slugs) - cat_skills
+    orphan_agents = set(profile.agent_slugs) - cat_agents
+
+    assert not orphan_skills, (
+        f"{profile_filename} declares skill slugs not in the catalogue: "
+        f"{sorted(orphan_skills)}"
+    )
+    assert not orphan_agents, (
+        f"{profile_filename} declares agent slugs not in the catalogue: "
+        f"{sorted(orphan_agents)}"
+    )
+
+
 def test_plan_produces_agent_artifacts():
     result = plan(_make_spec(), _PROFILE, _TEMPLATES)
     agent_artifacts = [a for a in result.artifacts if a.target_path.startswith("agents/")]

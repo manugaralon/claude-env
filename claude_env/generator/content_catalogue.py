@@ -81,6 +81,55 @@ _SKILL_CATALOGUE: dict[str, dict[str, str]] = {
         "skip_when": "simple yes/no questions, factual lookups, casual 'should I' without a meaningful tradeoff",
         "allowed_tools": "Agent, Bash, Read, Glob, Write",
     },
+    # Domain-specific stubs — currently render via skill_stub.j2 with no full
+    # body. They exist so domain profiles (data, infra) emit named triggers
+    # rather than hollow stubs. Promote to a full *.j2 template when the body
+    # is authored.
+    "run-pipeline": {
+        "skill_name": "run-pipeline",
+        "description": "Execute a data pipeline (Airflow DAG, dbt run, or scripted ETL) and surface failure context",
+        "invocation": "/run-pipeline",
+        "mandatory_triggers": "'/run-pipeline', 'run the pipeline', 'kick off the DAG', 'trigger the ETL'",
+        "strong_triggers": "'is the pipeline failing', 'why did the run break', dbt/airflow context with a run request",
+        "skip_when": "non-data projects, schema-only questions, no executable pipeline present",
+        "allowed_tools": "Bash, Read",
+    },
+    "validate-schema": {
+        "skill_name": "validate-schema",
+        "description": "Validate dataset schema against an expected contract (Pydantic, dbt schema.yml, JSON Schema)",
+        "invocation": "/validate-schema",
+        "mandatory_triggers": "'/validate-schema', 'check the schema', 'is this dataset valid'",
+        "strong_triggers": "schema mismatch errors, downstream consumer broke, contract drift suspected",
+        "skip_when": "no formal schema declared, exploratory data analysis, ad-hoc transforms",
+        "allowed_tools": "Bash, Read",
+    },
+    "profile-data": {
+        "skill_name": "profile-data",
+        "description": "Profile a dataset for shape, nulls, distributions, and outliers — produces a quality report",
+        "invocation": "/profile-data",
+        "mandatory_triggers": "'/profile-data', 'profile this dataset', 'data quality report'",
+        "strong_triggers": "'what does this data look like', 'are there nulls', 'distribution of column X'",
+        "skip_when": "no dataset to profile, schema-only questions, infrastructure work",
+        "allowed_tools": "Bash, Read",
+    },
+    "plan-apply": {
+        "skill_name": "plan-apply",
+        "description": "Run a plan/diff for infrastructure changes (terraform plan, pulumi preview, cdk diff) and explain the delta",
+        "invocation": "/plan-apply",
+        "mandatory_triggers": "'/plan-apply', 'terraform plan', 'pulumi preview', 'cdk diff'",
+        "strong_triggers": "'what would this change', 'preview the infra changes', 'show me the diff before applying'",
+        "skip_when": "non-IaC projects, runtime application logic, no plan-able infra surface",
+        "allowed_tools": "Bash, Read",
+    },
+    "validate-manifest": {
+        "skill_name": "validate-manifest",
+        "description": "Validate infrastructure manifests (Kubernetes YAML, Helm values, terraform vars) against schemas and policies",
+        "invocation": "/validate-manifest",
+        "mandatory_triggers": "'/validate-manifest', 'validate the manifest', 'is this YAML valid', 'check the helm values'",
+        "strong_triggers": "'kubernetes won't accept this', 'helm template fails', schema-validation errors on manifests",
+        "skip_when": "non-IaC projects, runtime config that isn't a manifest, ad-hoc YAML files",
+        "allowed_tools": "Bash, Read",
+    },
 }
 
 _AGENT_CATALOGUE: dict[str, dict[str, object]] = {
@@ -114,6 +163,30 @@ _AGENT_CATALOGUE: dict[str, dict[str, object]] = {
             "Invoked by the Worker (Sonnet) when the cost of getting it wrong is high."
         ),
         "skills": [],
+    },
+    "data-quality-reviewer": {
+        "agent_name": "data-quality-reviewer",
+        "description": (
+            "Review datasets and pipeline outputs for quality issues — nulls, "
+            "outliers, schema drift, distribution shifts."
+        ),
+        "skills": ["profile-data", "validate-schema"],
+    },
+    "schema-auditor": {
+        "agent_name": "schema-auditor",
+        "description": (
+            "Audit schema definitions against producer/consumer contracts and "
+            "flag breaking changes before they ship."
+        ),
+        "skills": ["validate-schema"],
+    },
+    "cost-reviewer": {
+        "agent_name": "cost-reviewer",
+        "description": (
+            "Review infrastructure changes for cost impact — flag expensive "
+            "resources, suggest cheaper alternatives, surface oversize defaults."
+        ),
+        "skills": ["plan-apply"],
     },
 }
 
