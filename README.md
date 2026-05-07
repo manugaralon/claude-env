@@ -54,6 +54,24 @@ claude-env bootstrap --spec spec.yaml
 claude-env setup
 ```
 
+### Integraciones opt-in (flags de bootstrap)
+
+```bash
+# MCPs project-scoped — escribe .mcp.json en la raíz del proyecto
+claude-env bootstrap --spec spec.yaml \
+  --with-browser              `# playwright MCP` \
+  --with-context7             `# upstash/context7 MCP` \
+  --with-sequential-thinking  `# secuencial-thinking MCP`
+
+# Plugins (no MCPs) — emite hint de instalación, no escribe a disco
+claude-env bootstrap --spec spec.yaml --with-claude-mem
+
+# Quality-gate-precommit hook — emite el marker .claude/quality-gate-precommit
+# que activa el hook global ~/.claude/hooks/quality-gate-precommit.sh para
+# este proyecto (lint + secrets en cada git commit)
+claude-env bootstrap --spec spec.yaml --with-quality-gate-precommit
+```
+
 ### Desde Claude Code
 
 Después de correr `claude-env setup`, escribe `/claude-env` en cualquier sesión de Claude Code para hacer bootstrap del proyecto actual interactivamente.
@@ -77,6 +95,11 @@ claude-env bootstrap [DIR]                Genera .claude/ para un proyecto
   --description, -d TEXT                  Descripción de una línea (sin API key)
   --spec, -s PATH                         Spec file YAML o Markdown
   --dry-run                               Previsualiza archivos sin escribir
+  --with-browser                          Añade playwright MCP a .mcp.json
+  --with-context7                         Añade context7 MCP a .mcp.json
+  --with-sequential-thinking              Añade sequential-thinking MCP a .mcp.json
+  --with-claude-mem                       Imprime hint de instalación del plugin
+  --with-quality-gate-precommit           Activa hook lint+secrets pre-commit
 claude-env version                        Imprime la versión
 ```
 
