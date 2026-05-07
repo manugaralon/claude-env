@@ -60,12 +60,34 @@ Generate the project's `.claude/` environment layer by running the claude-env CL
 
 4. Report which files were written and confirm the `.claude/` layer exists.
 
+## Opt-in integration flags
+
+Ask the user whether to enable any of these. None are required — only add flags
+the user explicitly opts into.
+
+- `--with-browser` — playwright MCP (browser automation) at project scope (writes `.mcp.json`)
+- `--with-context7` — upstash/context7 MCP (live docs lookup) at project scope
+- `--with-sequential-thinking` — sequential-thinking MCP at project scope
+- `--with-claude-mem` — prints the install hint for the claude-mem plugin (it's a
+  user-scoped plugin, not an MCP — no file is written)
+- `--with-quality-gate-precommit` — emits `.claude/quality-gate-precommit` marker
+  that opts the project into the global lint+secrets pre-commit hook
+
+Combine flags freely:
+
+```bash
+claude-env bootstrap --spec ./spec.yaml --with-browser --with-context7 \\
+    --with-quality-gate-precommit
+```
+
 ## Notes
 
 - Never run `claude-env bootstrap` without `--description` or `--spec` — it will
   block on an interactive prompt that cannot complete inside a Bash tool call.
 - `--description` triggers an LLM call (requires ANTHROPIC_API_KEY). If the key
   is missing, fall back to `--spec` with a minimal YAML spec you generate yourself.
+- The `--with-*` flags are independent and can be combined. Re-running bootstrap
+  with different flags is safe — generation is idempotent.
 """
 
 
