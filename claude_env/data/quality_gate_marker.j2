@@ -1,0 +1,9 @@
+# Marker file — opts this project into the quality-gate-precommit hook
+# installed at ~/.claude/hooks/quality-gate-precommit.sh.
+#
+# When this file exists at <project>/.claude/quality-gate-precommit, the
+# hook runs lint + secrets scan on staged diffs before every `git commit`
+# Claude Code makes. Heavy gates (build, tests) stay manual.
+#
+# Enable:  touch .claude/quality-gate-precommit
+# Disable: rm .claude/quality-gate-precommit

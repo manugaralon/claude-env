@@ -49,6 +49,7 @@ def plan(
     profile: DomainProfile,
     available_templates: list[str],
     mcp_slugs: list[str] | None = None,
+    with_quality_gate_precommit: bool = False,
 ) -> GenerationPlan:
     """Produce a GenerationPlan from spec + profile.
 
@@ -150,6 +151,17 @@ def plan(
                 template_id="mcp_json.j2",
                 context={"servers": list(mcp_servers)},
                 layer=OutputLayer.PROJECT_ROOT,
+            )
+        )
+
+    # Quality-gate-precommit hook opt-in marker
+    if with_quality_gate_precommit:
+        artifacts.append(
+            Artifact(
+                target_path="quality-gate-precommit",
+                template_id="quality_gate_marker.j2",
+                context={"project_name": spec.name},
+                layer=OutputLayer.PROJECT,
             )
         )
 

@@ -185,6 +185,13 @@ def bootstrap(
         False, "--with-claude-mem",
         help="Print install hint for the claude-mem plugin (plugin, not MCP — user-scoped)"
     ),
+    with_quality_gate_precommit: bool = typer.Option(
+        False, "--with-quality-gate-precommit",
+        help=(
+            "Emit .claude/quality-gate-precommit marker that opts this project "
+            "into the global quality-gate-precommit hook (lint + secrets on git commit)"
+        ),
+    ),
 ) -> None:
     """Generate .claude/ layer for the given project directory."""
     from claude_env.generator.generator import Generator, resolve_plan_paths
@@ -248,7 +255,9 @@ def bootstrap(
     console.print(f"Domain detected: [cyan]{profile.domain}[/cyan]")
 
     generation_plan = make_plan(
-        spec, profile, registry.list_templates(), mcp_slugs=mcp_slugs
+        spec, profile, registry.list_templates(),
+        mcp_slugs=mcp_slugs,
+        with_quality_gate_precommit=with_quality_gate_precommit,
     )
 
     if dry_run:

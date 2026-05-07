@@ -138,6 +138,32 @@ def test_plan_mcp_preserves_slug_order():
     assert server_names == ["context7", "playwright"]
 
 
+# ---------------------------------------------------------------------------
+# Quality-gate-precommit marker
+# ---------------------------------------------------------------------------
+
+
+def _qg_templates() -> list[str]:
+    return _TEMPLATES + ["quality_gate_marker.j2"]
+
+
+def test_plan_no_qg_marker_by_default():
+    profile = _make_profile("web", ["fix-issue"], [])
+    result = plan(_make_spec(), profile, _qg_templates())
+    assert not any(a.target_path == "quality-gate-precommit" for a in result.artifacts)
+
+
+def test_plan_emits_qg_marker_when_requested():
+    profile = _make_profile("web", ["fix-issue"], [])
+    result = plan(
+        _make_spec(), profile, _qg_templates(),
+        with_quality_gate_precommit=True,
+    )
+    marker = next(a for a in result.artifacts if a.target_path == "quality-gate-precommit")
+    assert marker.layer == OutputLayer.PROJECT
+    assert marker.template_id == "quality_gate_marker.j2"
+
+
 def test_plan_produces_agent_artifacts():
     result = plan(_make_spec(), _PROFILE, _TEMPLATES)
     agent_artifacts = [a for a in result.artifacts if a.target_path.startswith("agents/")]

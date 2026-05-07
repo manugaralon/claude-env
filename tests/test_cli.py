@@ -168,6 +168,42 @@ def test_bootstrap_with_claude_mem_emits_plugin_hint_no_file(
     assert not (project_dir / ".mcp.json").exists()
 
 
+def test_bootstrap_with_quality_gate_precommit_emits_marker(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(Path, "home", lambda: tmp_path / "home")
+    spec = tmp_path / "spec.yaml"
+    shutil.copy(FIXTURES / "simple_web.yaml", spec)
+    project_dir = tmp_path / "proj"
+    project_dir.mkdir()
+    result = runner.invoke(
+        app, ["bootstrap", str(project_dir), "--spec", str(spec),
+              "--with-quality-gate-precommit"]
+    )
+    assert result.exit_code == 0, result.output
+    marker = project_dir / ".claude" / "quality-gate-precommit"
+    assert marker.exists()
+    # Body should mention the hook and how to disable it
+    body = marker.read_text()
+    assert "quality-gate-precommit" in body
+    assert "rm" in body  # disable hint
+
+
+def test_bootstrap_without_quality_gate_flag_no_marker(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(Path, "home", lambda: tmp_path / "home")
+    spec = tmp_path / "spec.yaml"
+    shutil.copy(FIXTURES / "simple_web.yaml", spec)
+    project_dir = tmp_path / "proj"
+    project_dir.mkdir()
+    result = runner.invoke(
+        app, ["bootstrap", str(project_dir), "--spec", str(spec)]
+    )
+    assert result.exit_code == 0, result.output
+    assert not (project_dir / ".claude" / "quality-gate-precommit").exists()
+
+
 def test_bootstrap_with_spec_file_writes_project_layer(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
