@@ -7,6 +7,7 @@ skill_slugs:
   - run-lint
   - quality-gate
   - karpathy-guidelines
+  - llm-council
 agent_slugs:
   - code-reviewer
   - security-reviewer

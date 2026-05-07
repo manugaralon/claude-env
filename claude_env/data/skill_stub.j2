@@ -1,7 +1,12 @@
 ---
 name: {{ skill_name }}
-description: {{ description }}
----
+description: >-
+  {{ description }}{% if mandatory_triggers %}
+  MANDATORY TRIGGERS: {{ mandatory_triggers }}.{% endif %}{% if strong_triggers %}
+  STRONG TRIGGERS: {{ strong_triggers }}.{% endif %}{% if skip_when %}
+  SKIP: do NOT trigger on {{ skip_when }}.{% endif %}
+{% if allowed_tools %}allowed-tools: {{ allowed_tools }}
+{% endif %}---
 
 # {{ skill_name }}
 

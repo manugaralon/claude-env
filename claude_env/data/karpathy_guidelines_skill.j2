@@ -1,9 +1,13 @@
 ---
 name: karpathy-guidelines
 description: >-
-  Apply Karpathy's 4 principles to reduce common LLM coding mistakes.
-  Use when writing, reviewing, or refactoring code to avoid overcomplication,
-  make surgical changes, surface assumptions, and define verifiable success criteria.
+  Apply Karpathy's 4 coding principles: think before coding, simplicity, surgical changes,
+  goal-driven execution. Reduces common LLM coding mistakes (overcomplication, silent
+  assumptions, unbounded scope).
+  MANDATORY TRIGGERS: '/karpathy-guidelines', 'karpathy principles', 'apply karpathy', 'be more rigorous'.
+  STRONG TRIGGERS: starting non-trivial implementation, before significant refactor,
+  when assumptions feel implicit, when complexity is creeping in.
+  SKIP: do NOT trigger on trivial 1-line edits, search/explore operations, or factual lookups.
 allowed-tools: Bash
 ---
 

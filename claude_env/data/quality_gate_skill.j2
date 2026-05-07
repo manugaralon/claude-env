@@ -1,6 +1,11 @@
 ---
 name: quality-gate
-description: Run all 5 quality gates — nothing ships without passing lint, type check, build, secrets scan, and tests
+description: >-
+  Run all 5 quality gates — nothing ships without passing lint, type check, build,
+  secrets scan, and tests.
+  MANDATORY TRIGGERS: '/quality-gate', 'quality gate', 'final check', 'before commit', 'ready to ship'.
+  STRONG TRIGGERS: after completing implementation, 'I'm done', 'is this done', 'can I merge'.
+  SKIP: do NOT trigger on mid-implementation work, exploration, or when there are no actual changes to verify.
 allowed-tools: Bash
 ---
 
