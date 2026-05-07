@@ -98,6 +98,7 @@ claude-env bootstrap [DIR]                Generate .claude/ for a project
   --with-sequential-thinking              Add sequential-thinking MCP to .mcp.json
   --with-claude-mem                       Print install hint for the plugin
   --with-quality-gate-precommit           Enable lint+secrets pre-commit hook
+claude-env audit [DIR]                    Audit a generated .claude/ (exit 1 on FAIL)
 claude-env version                        Print version
 ```
 

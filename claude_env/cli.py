@@ -300,6 +300,53 @@ def bootstrap(
         console.print(f"  [yellow]plugin →[/yellow] {hint}")
     console.print(f"[bold green]Done.[/bold green] {len(written)} files generated.")
 
+    # QA-01: structural audit before the developer starts a session.
+    from claude_env.auditor import audit as run_audit
+
+    report = run_audit(project_root)
+    if report.passed and not report.findings:
+        console.print("[green]audit:[/green] PASS")
+    else:
+        verdict = "[green]PASS[/green]" if report.passed else "[red]FAIL[/red]"
+        console.print(f"[bold]audit:[/bold] {verdict}")
+        for finding in report.findings:
+            color = "red" if finding.severity == "error" else "yellow"
+            console.print(
+                f"  [{color}]{finding.severity}[/{color}] "
+                f"{finding.rule} [dim]{finding.file}[/dim]: {finding.message}"
+            )
+        if not report.passed:
+            raise typer.Exit(1)
+
+
+@app.command()
+def audit(
+    project_dir: Path = typer.Argument(
+        Path("."), help="Project directory to audit (default: current directory)"
+    ),
+) -> None:
+    """Audit a generated `.claude/` environment without re-running bootstrap.
+
+    Returns exit code 0 on PASS, 1 on FAIL. Useful for pre-merge checks
+    or for re-validating after manual edits to a generated environment.
+    """
+    from claude_env.auditor import audit as run_audit
+
+    report = run_audit(project_dir.resolve())
+    if not report.findings:
+        console.print(f"[green]audit:[/green] PASS — {project_dir.resolve()}")
+        return
+    verdict = "[green]PASS[/green]" if report.passed else "[red]FAIL[/red]"
+    console.print(f"[bold]audit:[/bold] {verdict} — {project_dir.resolve()}")
+    for finding in report.findings:
+        color = "red" if finding.severity == "error" else "yellow"
+        console.print(
+            f"  [{color}]{finding.severity}[/{color}] "
+            f"{finding.rule} [dim]{finding.file}[/dim]: {finding.message}"
+        )
+    if not report.passed:
+        raise typer.Exit(1)
+
 
 @app.command()
 def capture(

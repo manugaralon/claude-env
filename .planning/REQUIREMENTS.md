@@ -27,7 +27,7 @@
 
 ### Quality
 
-- [ ] **QA-01**: Audit step validates generated environment: CLAUDE.md line count, hooks JSON validity, subagent `skills:` field presence, skill description quality
+- [x] **QA-01**: Audit step validates generated environment: CLAUDE.md line count, hooks JSON validity, subagent `skills:` field presence, skill description quality
 
 ## v2 Requirements (deferred)
 

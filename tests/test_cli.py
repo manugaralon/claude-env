@@ -204,6 +204,56 @@ def test_bootstrap_without_quality_gate_flag_no_marker(
     assert not (project_dir / ".claude" / "quality-gate-precommit").exists()
 
 
+def test_bootstrap_runs_audit_on_success(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(Path, "home", lambda: tmp_path / "home")
+    spec = tmp_path / "spec.yaml"
+    shutil.copy(FIXTURES / "simple_web.yaml", spec)
+    project_dir = tmp_path / "proj"
+    project_dir.mkdir()
+    result = runner.invoke(
+        app, ["bootstrap", str(project_dir), "--spec", str(spec)]
+    )
+    assert result.exit_code == 0, result.output
+    assert "audit:" in result.output
+    assert "PASS" in result.output
+
+
+def test_audit_subcommand_passes_on_clean_env(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(Path, "home", lambda: tmp_path / "home")
+    spec = tmp_path / "spec.yaml"
+    shutil.copy(FIXTURES / "simple_web.yaml", spec)
+    project_dir = tmp_path / "proj"
+    project_dir.mkdir()
+    runner.invoke(app, ["bootstrap", str(project_dir), "--spec", str(spec)])
+    # Audit the just-bootstrapped project
+    result = runner.invoke(app, ["audit", str(project_dir)])
+    assert result.exit_code == 0, result.output
+    assert "PASS" in result.output
+
+
+def test_audit_subcommand_fails_on_broken_env(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(Path, "home", lambda: tmp_path / "home")
+    spec = tmp_path / "spec.yaml"
+    shutil.copy(FIXTURES / "simple_web.yaml", spec)
+    project_dir = tmp_path / "proj"
+    project_dir.mkdir()
+    runner.invoke(app, ["bootstrap", str(project_dir), "--spec", str(spec)])
+    # Break settings.json
+    settings = project_dir / ".claude" / "settings.json"
+    settings.parent.mkdir(parents=True, exist_ok=True)
+    settings.write_text('{"hooks": [{},]}\n', encoding="utf-8")
+    result = runner.invoke(app, ["audit", str(project_dir)])
+    assert result.exit_code == 1
+    assert "FAIL" in result.output
+    assert "SETTINGS_JSON_INVALID" in result.output
+
+
 def test_bootstrap_with_spec_file_writes_project_layer(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
