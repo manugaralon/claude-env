@@ -105,7 +105,9 @@ def _install_bootstrap_skill(global_root: Path) -> Path:
 @app.command()
 def version() -> None:
     """Print the package version."""
-    typer.echo("claude-env 0.1.0")
+    from claude_env import __version__
+
+    typer.echo(f"claude-env {__version__}")
 
 
 def _build_global_profile() -> "DomainProfile":  # noqa: F821

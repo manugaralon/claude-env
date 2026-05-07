@@ -15,9 +15,20 @@ FIXTURES = Path(__file__).parent / "fixtures" / "specs"
 
 
 def test_version_command() -> None:
+    """Command runs and prints `claude-env <version>`.
+
+    The version itself comes from importlib.metadata at runtime — it'll
+    match pyproject.toml when the package is installed (CLI invocation,
+    `uv tool install`) and resolve to 'dev' under pytest from source.
+    Both are correct semantics for their respective contexts; this test
+    only asserts the command shape, not the version value.
+    """
     result = runner.invoke(app, ["version"])
     assert result.exit_code == 0
     assert "claude-env" in result.output
+    # Output is "claude-env <something>\n" — must have the something
+    parts = result.output.strip().split()
+    assert len(parts) == 2 and parts[0] == "claude-env" and parts[1]
 
 
 def test_setup_writes_general_layer(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
