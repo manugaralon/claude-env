@@ -8,6 +8,7 @@ from claude_env.models.project_spec import ProjectSpec
 _SKILL_TEMPLATE_MAP: dict[str, str] = {
     "quality-gate": "quality_gate_skill.j2",
     "karpathy-guidelines": "karpathy_guidelines_skill.j2",
+    "llm-council": "llm_council_skill.j2",
 }
 
 _AGENT_TEMPLATE_MAP: dict[str, str] = {
@@ -45,6 +46,31 @@ def plan(
                 "project_name": spec.name,
                 "domain": profile.domain,
                 "sections": profile.claude_md_sections,
+            },
+            layer=OutputLayer.PROJECT,
+        )
+    )
+
+    # Domain context (mattpocock CONTEXT.md pattern — ubiquitous language scaffold)
+    artifacts.append(
+        Artifact(
+            target_path="CONTEXT.md",
+            template_id="context_md.j2",
+            context={
+                "project_name": spec.name,
+                "description": spec.description,
+            },
+            layer=OutputLayer.PROJECT,
+        )
+    )
+
+    # ADR scaffold (docs/adr/README.md — format guide; numbered ADRs created lazily)
+    artifacts.append(
+        Artifact(
+            target_path="docs/adr/README.md",
+            template_id="adr_readme.j2",
+            context={
+                "project_name": spec.name,
             },
             layer=OutputLayer.PROJECT,
         )

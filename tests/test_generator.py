@@ -58,18 +58,29 @@ def test_skill_frontmatter(tmp_path: Path, real_registry, web_plan: GenerationPl
     assert content.startswith("---")
     assert "name:" in content
     assert "description:" in content
-    # Extract description line and check it starts with a verb (action word)
-    for line in content.splitlines():
+    # Extract description value and check it starts with a verb (action word).
+    # Supports both inline (`description: text`) and folded-scalar (`description: >-\n  text`) forms.
+    lines = content.splitlines()
+    description_value = None
+    for i, line in enumerate(lines):
         if line.startswith("description:"):
-            description_value = line.split(":", 1)[1].strip()
-            # First word should be a verb (action word — capitalize check)
-            first_word = description_value.split()[0].rstrip(",")
-            assert first_word[0].isupper() or first_word[0].islower()
-            # Description should start with a verb: common verbs in catalogue
-            assert any(description_value.lower().startswith(v) for v in [
-                "diagnose", "stage", "run", "update", "scaffold", "perform"
-            ]), f"Description does not start with a verb: {description_value}"
+            inline = line.split(":", 1)[1].strip()
+            if inline in (">-", ">", "|-", "|"):
+                # Folded/literal scalar — take the first non-empty continuation line
+                for cont in lines[i + 1:]:
+                    if cont.strip():
+                        description_value = cont.strip()
+                        break
+            else:
+                description_value = inline
             break
+    assert description_value, "description value not found"
+    first_word = description_value.split()[0].rstrip(",")
+    assert first_word[0].isupper() or first_word[0].islower()
+    # Description should start with a verb: common verbs in catalogue
+    assert any(description_value.lower().startswith(v) for v in [
+        "diagnose", "stage", "run", "update", "scaffold", "perform"
+    ]), f"Description does not start with a verb: {description_value}"
 
 
 # ---------------------------------------------------------------------------
