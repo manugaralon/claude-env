@@ -99,6 +99,14 @@ _AGENT_CATALOGUE: dict[str, dict[str, object]] = {
         "description": "Review CLI commands for usability, help text clarity, and ergonomics",
         "skills": ["fix-issue", "add-subcommand"],
     },
+    "code-reviewer": {
+        "agent_name": "code-reviewer",
+        "description": (
+            "Review code changes for correctness, clarity, and adherence to project "
+            "conventions. Invoked with zero context — only the artifact under review."
+        ),
+        "skills": ["fix-issue", "create-pr"],
+    },
     "advisor": {
         "agent_name": "advisor",
         "description": (
@@ -108,6 +116,26 @@ _AGENT_CATALOGUE: dict[str, dict[str, object]] = {
         "skills": [],
     },
 }
+
+
+def known_skill_slugs() -> list[str]:
+    """Return every skill slug known by the catalogue or the planner template map.
+
+    Source of truth for ``claude-env setup``'s global install — the kitchen
+    sink of skills that ship with the package. Lazy-imports the planner's
+    template map to avoid a circular import at module load.
+    """
+    from claude_env.pipeline.environment_planner import _SKILL_TEMPLATE_MAP
+
+    return sorted(set(_SKILL_CATALOGUE.keys()) | set(_SKILL_TEMPLATE_MAP.keys()))
+
+
+def known_agent_slugs() -> list[str]:
+    """Return every agent slug known by the catalogue.
+
+    Source of truth for ``claude-env setup``'s global agent install.
+    """
+    return sorted(_AGENT_CATALOGUE.keys())
 
 
 def enrich_artifact_context(artifact: Artifact, plan: GenerationPlan) -> dict[str, object]:

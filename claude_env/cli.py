@@ -86,12 +86,45 @@ def version() -> None:
     typer.echo("claude-env 0.1.0")
 
 
+def _build_global_profile() -> "DomainProfile":  # noqa: F821
+    """Construct the kitchen-sink DomainProfile used by `claude-env setup`.
+
+    Drives the global ~/.claude/ install — every skill in the catalogue
+    plus every catalogued agent. Empty `detection_signals` keeps this
+    profile out of project-level domain classification.
+    """
+    from claude_env.generator.content_catalogue import (
+        known_agent_slugs,
+        known_skill_slugs,
+    )
+    from claude_env.models.domain_profile import DomainProfile
+
+    return DomainProfile(
+        domain="global",
+        display_name="Global Claude Conventions",
+        description="Kitchen-sink install — every catalogued skill and agent for ~/.claude/",
+        skill_slugs=known_skill_slugs(),
+        agent_slugs=known_agent_slugs(),
+        claude_md_sections=[
+            "think_before_coding",
+            "plan_execute_verify",
+            "context_management",
+            "lessons_loop",
+            "delegate_prompting",
+            "demand_elegance",
+            "autonomous_bug_fixing",
+            "core_principles",
+        ],
+        hook_templates=[],
+        detection_signals=[],
+    )
+
+
 @app.command()
 def setup() -> None:
     """Run global onboarding wizard — writes ~/.claude/ layer."""
     from claude_env.generator.generator import Generator
     from claude_env.models.project_spec import ProjectSpec
-    from claude_env.pipeline.domain_classifier import load_all_profiles
     from claude_env.pipeline.environment_planner import plan as make_plan
     from claude_env.templates.registry import TemplateRegistry
 
@@ -103,9 +136,8 @@ def setup() -> None:
         description=f"Global Claude Code conventions for {user_name}",
     )
     registry = TemplateRegistry(_TEMPLATES_DIR.resolve())
-    profiles = load_all_profiles(_PROFILES_DIR)
-    general = next(p for p in profiles if p.domain == "general")
-    generation_plan = make_plan(spec, general, registry.list_templates())
+    profile = _build_global_profile()
+    generation_plan = make_plan(spec, profile, registry.list_templates())
 
     gen = Generator(registry)
     # Pitfall #4: project_root=Path.home() so PROJECT-layer → ~/.claude/
@@ -119,6 +151,9 @@ def setup() -> None:
 
     console.print(
         f"[green]Setup complete.[/green] Wrote {len(written)} files + skill at {skill_path}."
+    )
+    console.print(
+        f"  Installed {len(profile.skill_slugs)} skills, {len(profile.agent_slugs)} agents."
     )
 
 

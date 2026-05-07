@@ -27,12 +27,69 @@ def test_setup_writes_general_layer(tmp_path: Path, monkeypatch: pytest.MonkeyPa
     assert (tmp_path / ".claude" / "CLAUDE.md").exists()
 
 
-def test_setup_uses_general_profile(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_setup_uses_global_profile(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     result = runner.invoke(app, ["setup"], input="Manuel\n")
     assert result.exit_code == 0, result.output
     content = (tmp_path / ".claude" / "CLAUDE.md").read_text()
     assert "Plan" in content  # claude_md_project.j2 plan_execute_verify section
+
+
+def test_setup_installs_full_skill_catalogue(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """setup must install every catalogued skill globally — not a subset."""
+    from claude_env.generator.content_catalogue import known_skill_slugs
+
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    result = runner.invoke(app, ["setup"], input="Manuel\n")
+    assert result.exit_code == 0, result.output
+    skills_dir = tmp_path / ".claude" / "skills"
+    for slug in known_skill_slugs():
+        assert (skills_dir / slug / "SKILL.md").exists(), f"Missing global skill: {slug}"
+
+
+def test_setup_installs_all_catalogued_agents(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from claude_env.generator.content_catalogue import known_agent_slugs
+
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    result = runner.invoke(app, ["setup"], input="Manuel\n")
+    assert result.exit_code == 0, result.output
+    agents_dir = tmp_path / ".claude" / "agents"
+    for slug in known_agent_slugs():
+        assert (agents_dir / f"{slug}.md").exists(), f"Missing global agent: {slug}"
+
+
+def test_setup_installs_skill_sidecars(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """tdd and grill-with-docs sidecars must land alongside SKILL.md globally."""
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    result = runner.invoke(app, ["setup"], input="Manuel\n")
+    assert result.exit_code == 0, result.output
+    tdd = tmp_path / ".claude/skills/tdd"
+    for s in ("tests.md", "mocking.md", "deep-modules.md",
+              "interface-design.md", "refactoring.md"):
+        assert (tdd / s).exists(), f"Missing tdd sidecar: {s}"
+    grill = tmp_path / ".claude/skills/grill-with-docs"
+    assert (grill / "CONTEXT-FORMAT.md").exists()
+    assert (grill / "ADR-FORMAT.md").exists()
+
+
+def test_build_global_profile_kitchen_sink() -> None:
+    """The helper that drives setup must return every catalogued slug."""
+    from claude_env.cli import _build_global_profile
+    from claude_env.generator.content_catalogue import (
+        known_agent_slugs,
+        known_skill_slugs,
+    )
+
+    profile = _build_global_profile()
+    assert profile.skill_slugs == known_skill_slugs()
+    assert profile.agent_slugs == known_agent_slugs()
+    assert profile.detection_signals == []  # never picked by classifier
 
 
 def test_bootstrap_with_spec_file_writes_project_layer(
