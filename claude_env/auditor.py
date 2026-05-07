@@ -122,6 +122,44 @@ def _check_settings_json_valid(project_root: Path) -> list[Finding]:
     return []
 
 
+def _check_mcp_json_valid(project_root: Path) -> list[Finding]:
+    """`.mcp.json` (project root, not under .claude/) must be valid JSON
+    with a top-level `mcpServers` mapping when present.
+
+    Optional file — only emitted by --with-browser/--with-context7 etc.
+    """
+    target = project_root / ".mcp.json"
+    if not target.exists():
+        return []
+    try:
+        data = json.loads(target.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return [Finding(
+            severity="error",
+            rule="MCP_JSON_INVALID",
+            file=str(target.relative_to(project_root)),
+            message=f"not valid JSON ({exc.msg} at line {exc.lineno} col {exc.colno})",
+        )]
+    if not isinstance(data, dict) or "mcpServers" not in data:
+        return [Finding(
+            severity="error",
+            rule="MCP_JSON_MISSING_SERVERS",
+            file=str(target.relative_to(project_root)),
+            message=(
+                ".mcp.json must be an object with an `mcpServers` key — "
+                "Claude Code reads project MCPs from that field."
+            ),
+        )]
+    if not isinstance(data["mcpServers"], dict):
+        return [Finding(
+            severity="error",
+            rule="MCP_JSON_SERVERS_NOT_OBJECT",
+            file=str(target.relative_to(project_root)),
+            message="`mcpServers` must be a JSON object mapping server names to configs",
+        )]
+    return []
+
+
 def _check_agents_have_skills_field(project_root: Path) -> list[Finding]:
     agents_dir = project_root / ".claude" / "agents"
     if not agents_dir.is_dir():
@@ -286,6 +324,7 @@ def _check_skill_link_targets_exist(project_root: Path) -> list[Finding]:
 _CHECKS = (
     _check_claude_md_line_count,
     _check_settings_json_valid,
+    _check_mcp_json_valid,
     _check_agents_have_skills_field,
     _check_skill_descriptions_verb_phrase,
     _check_skill_link_targets_exist,

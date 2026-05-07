@@ -192,6 +192,68 @@ def test_audit_resolves_cross_skill_links(
 
 
 # ---------------------------------------------------------------------------
+# .mcp.json checks
+# ---------------------------------------------------------------------------
+
+
+def test_audit_passes_when_mcp_json_absent(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
+    """No --with-* flags → no .mcp.json → audit must not error on its absence."""
+    project = _bootstrap_for_audit(tmp_path, real_registry, web_plan)
+    report = audit(project)
+    mcp_findings = [f for f in report.findings if f.rule.startswith("MCP_JSON")]
+    assert mcp_findings == []
+
+
+def test_audit_fails_on_mcp_json_invalid(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
+    project = _bootstrap_for_audit(tmp_path, real_registry, web_plan)
+    (project / ".mcp.json").write_text('{ "mcpServers":', encoding="utf-8")
+    report = audit(project)
+    finding = next(f for f in report.findings if f.rule == "MCP_JSON_INVALID")
+    assert finding.file == ".mcp.json"
+
+
+def test_audit_fails_on_mcp_json_missing_servers_key(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
+    project = _bootstrap_for_audit(tmp_path, real_registry, web_plan)
+    (project / ".mcp.json").write_text('{"hooks": []}', encoding="utf-8")
+    report = audit(project)
+    finding = next(
+        f for f in report.findings if f.rule == "MCP_JSON_MISSING_SERVERS"
+    )
+    assert "mcpServers" in finding.message
+
+
+def test_audit_fails_on_mcp_servers_not_object(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
+    project = _bootstrap_for_audit(tmp_path, real_registry, web_plan)
+    (project / ".mcp.json").write_text('{"mcpServers": []}', encoding="utf-8")
+    report = audit(project)
+    finding = next(
+        f for f in report.findings if f.rule == "MCP_JSON_SERVERS_NOT_OBJECT"
+    )
+    assert "object" in finding.message
+
+
+def test_audit_passes_on_well_formed_mcp_json(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
+    project = _bootstrap_for_audit(tmp_path, real_registry, web_plan)
+    (project / ".mcp.json").write_text(
+        '{"mcpServers": {"playwright": {"command": "npx", "args": ["-y", "@playwright/mcp@latest"]}}}',
+        encoding="utf-8",
+    )
+    report = audit(project)
+    mcp_findings = [f for f in report.findings if f.rule.startswith("MCP_JSON")]
+    assert mcp_findings == []
+
+
+# ---------------------------------------------------------------------------
 # Report rendering
 # ---------------------------------------------------------------------------
 
