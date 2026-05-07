@@ -57,7 +57,7 @@ def test_keep_trailing_newline(templates_dir: Path) -> None:
 
 # ---- Integration tests against real project-root templates/ directory ----
 
-REAL_TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
+REAL_TEMPLATES_DIR = Path(__file__).parent.parent / "claude_env" / "data"
 
 
 def test_real_templates_directory_exists() -> None:
@@ -89,6 +89,12 @@ def test_skill_stub_renders() -> None:
             "skill_name": "fix-issue",
             "description": "Fix a reported issue with minimal changes.",
             "invocation": "/fix-issue",
+            # Optional frontmatter fields enriched by enrich_artifact_context() in prod;
+            # tests render directly so must supply them (empty = no-op render).
+            "mandatory_triggers": "",
+            "strong_triggers": "",
+            "skip_when": "",
+            "allowed_tools": "",
         },
     )
     assert "fix-issue" in out

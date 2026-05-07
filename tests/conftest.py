@@ -37,8 +37,8 @@ def templates_dir(tmp_path: Path) -> Path:
 
 @pytest.fixture
 def real_registry() -> TemplateRegistry:
-    """TemplateRegistry backed by the real templates/ directory at project root."""
-    templates_path = Path(__file__).parent.parent / "templates"
+    """TemplateRegistry backed by the canonical templates dir at claude_env/data/."""
+    templates_path = Path(__file__).parent.parent / "claude_env" / "data"
     return TemplateRegistry(templates_path.resolve())
 
 

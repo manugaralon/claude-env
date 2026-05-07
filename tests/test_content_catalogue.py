@@ -10,7 +10,7 @@ from claude_env.generator.content_catalogue import enrich_artifact_context
 from claude_env.models.generation_plan import Artifact, GenerationPlan, OutputLayer
 from claude_env.templates.registry import TemplateRegistry
 
-TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
+TEMPLATES_DIR = Path(__file__).parent.parent / "claude_env" / "data"
 
 
 def _make_artifact(template_id: str, context: dict[str, object]) -> Artifact:
