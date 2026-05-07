@@ -9,6 +9,14 @@ _SKILL_TEMPLATE_MAP: dict[str, str] = {
     "quality-gate": "quality_gate_skill.j2",
     "karpathy-guidelines": "karpathy_guidelines_skill.j2",
     "llm-council": "llm_council_skill.j2",
+    # Cherry-picked atomic skills (mattpocock + obra/superpowers, 2026-05-07)
+    "grill-with-docs": "grill_with_docs_skill.j2",
+    "tdd": "tdd_skill.j2",
+    "systematic-debugging": "systematic_debugging_skill.j2",
+    "brainstorming": "brainstorming_skill.j2",
+    "verification-before-completion": "verification_before_completion_skill.j2",
+    "writing-plans": "writing_plans_skill.j2",
+    "improve-codebase-architecture": "improve_codebase_architecture_skill.j2",
 }
 
 _AGENT_TEMPLATE_MAP: dict[str, str] = {

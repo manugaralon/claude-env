@@ -243,5 +243,46 @@ def capture(
     console.print(f"\n[bold]Done.[/bold] {success} OK, {failed} failed. Files in: {output.resolve()}")
 
 
+@app.command()
+def analyze(
+    target: Path = typer.Argument(Path("./notes"), help="Directory or single .md file to analyze"),
+    force: bool = typer.Option(False, "--force", "-f", help="Re-analyze already analyzed files"),
+) -> None:
+    """Evaluate captured notes for ideas applicable to claude-env."""
+    import anthropic as _anthropic
+
+    from claude_env.analyzer import analyze_file
+
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    if not api_key:
+        console.print("[red]Error:[/red] ANTHROPIC_API_KEY is not set.")
+        raise typer.Exit(1)
+
+    client = _anthropic.Anthropic(api_key=api_key)
+
+    if target.is_file():
+        files = [target]
+    elif target.is_dir():
+        files = sorted(target.glob("*.md"))
+    else:
+        console.print(f"[red]Error:[/red] {target} not found")
+        raise typer.Exit(1)
+
+    if not files:
+        console.print(f"No .md files found in {target}")
+        raise typer.Exit(0)
+
+    analyzed, skipped = 0, 0
+    for f in files:
+        if analyze_file(f, client, force=force):
+            console.print(f"  [green]analyzed[/green] {f.name}")
+            analyzed += 1
+        else:
+            console.print(f"  [dim]skipped[/dim] {f.name} (already analyzed, use --force to redo)")
+            skipped += 1
+
+    console.print(f"\n[bold]Done.[/bold] {analyzed} analyzed, {skipped} skipped.")
+
+
 if __name__ == "__main__":
     app()

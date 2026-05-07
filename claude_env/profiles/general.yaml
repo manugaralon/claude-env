@@ -8,6 +8,12 @@ skill_slugs:
   - quality-gate
   - karpathy-guidelines
   - llm-council
+  - grill-with-docs
+  - tdd
+  - systematic-debugging
+  - brainstorming
+  - verification-before-completion
+  - writing-plans
 agent_slugs:
   - code-reviewer
   - security-reviewer

@@ -27,7 +27,15 @@ def _make_spec(name: str = "my-project") -> ProjectSpec:
     return ProjectSpec(name=name, description="A test project")
 
 
-_TEMPLATES = ["claude_md_project.j2", "skill_stub.j2", "agent_stub.j2", "quality_gate_skill.j2", "advisor_agent.j2", "karpathy_guidelines_skill.j2", "llm_council_skill.j2", "context_md.j2", "adr_readme.j2"]
+_TEMPLATES = [
+    "claude_md_project.j2", "skill_stub.j2", "agent_stub.j2",
+    "quality_gate_skill.j2", "advisor_agent.j2", "karpathy_guidelines_skill.j2",
+    "llm_council_skill.j2", "context_md.j2", "adr_readme.j2",
+    # Cherry-picked atomic skills (2026-05-07)
+    "grill_with_docs_skill.j2", "tdd_skill.j2", "systematic_debugging_skill.j2",
+    "brainstorming_skill.j2", "verification_before_completion_skill.j2",
+    "writing_plans_skill.j2", "improve_codebase_architecture_skill.j2",
+]
 _PROFILE = _make_profile("web", ["fix-issue", "create-pr"], ["security-reviewer"])
 
 

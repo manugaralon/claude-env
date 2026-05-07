@@ -8,6 +8,14 @@ skill_slugs:
   - add-subcommand
   - quality-gate
   - karpathy-guidelines
+  - llm-council
+  - grill-with-docs
+  - tdd
+  - systematic-debugging
+  - brainstorming
+  - verification-before-completion
+  - writing-plans
+  - improve-codebase-architecture
 agent_slugs:
   - cli-ux-reviewer
   - security-reviewer
