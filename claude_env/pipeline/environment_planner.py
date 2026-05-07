@@ -68,6 +68,7 @@ def plan(
     Raises:
         ValueError: if any artifact references a template_id not in available_templates.
     """
+    from claude_env.hook_registry import resolve_hooks
     from claude_env.mcp_registry import resolve_mcp_servers
 
     artifacts: list[Artifact] = []
@@ -138,6 +139,20 @@ def plan(
                 target_path=f"agents/{slug}.md",
                 template_id=_AGENT_TEMPLATE_MAP.get(slug, "agent_stub.j2"),
                 context={"slug": slug, "domain": profile.domain},
+                layer=OutputLayer.PROJECT,
+            )
+        )
+
+    # Hooks → .claude/settings.json (GEN-04). Emitted only when the profile
+    # declares at least one known hook slug; otherwise no settings file is
+    # written and the user gets a clean `.claude/` without empty config.
+    hooks = resolve_hooks(profile.hook_templates, spec.languages)
+    if hooks:
+        artifacts.append(
+            Artifact(
+                target_path="settings.json",
+                template_id="settings_json.j2",
+                context={"hooks": list(hooks)},
                 layer=OutputLayer.PROJECT,
             )
         )

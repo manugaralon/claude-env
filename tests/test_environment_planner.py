@@ -31,6 +31,7 @@ _TEMPLATES = [
     "claude_md_project.j2", "skill_stub.j2", "agent_stub.j2",
     "quality_gate_skill.j2", "advisor_agent.j2", "karpathy_guidelines_skill.j2",
     "llm_council_skill.j2", "context_md.j2", "adr_readme.j2",
+    "settings_json.j2",
     # Cherry-picked atomic skills (2026-05-07)
     "grill_with_docs_skill.j2", "tdd_skill.j2", "systematic_debugging_skill.j2",
     "brainstorming_skill.j2", "verification_before_completion_skill.j2",
@@ -165,6 +166,75 @@ def test_plan_emits_qg_marker_when_requested():
 
 
 # ---------------------------------------------------------------------------
+# Hook templates → settings.json
+# ---------------------------------------------------------------------------
+
+
+def test_plan_emits_settings_json_when_profile_has_hooks():
+    profile = DomainProfile(
+        domain="web",
+        display_name="Web",
+        description="Test",
+        skill_slugs=["fix-issue"],
+        agent_slugs=[],
+        claude_md_sections=["plan_execute_verify"],
+        hook_templates=["lint_after_edit"],
+        detection_signals=[],
+    )
+    spec = ProjectSpec(name="x", description="x", languages=["python"])
+    result = plan(spec, profile, _TEMPLATES)
+    settings = next(a for a in result.artifacts if a.target_path == "settings.json")
+    assert settings.template_id == "settings_json.j2"
+    assert settings.layer == OutputLayer.PROJECT
+    hooks = settings.context["hooks"]
+    assert hooks == [{"command": "ruff check .", "exit_code": 2}]
+
+
+def test_plan_omits_settings_json_when_no_hooks():
+    profile = _make_profile("web", ["fix-issue"], [])
+    # _make_profile returns hook_templates=[]
+    result = plan(_make_spec(), profile, _TEMPLATES)
+    assert not any(a.target_path == "settings.json" for a in result.artifacts)
+
+
+def test_plan_settings_json_typescript_uses_eslint():
+    profile = DomainProfile(
+        domain="web",
+        display_name="Web",
+        description="Test",
+        skill_slugs=["fix-issue"],
+        agent_slugs=[],
+        claude_md_sections=["plan_execute_verify"],
+        hook_templates=["lint_after_edit", "typecheck_after_edit"],
+        detection_signals=[],
+    )
+    spec = ProjectSpec(name="x", description="x", languages=["typescript"])
+    result = plan(spec, profile, _TEMPLATES)
+    settings = next(a for a in result.artifacts if a.target_path == "settings.json")
+    commands = [h["command"] for h in settings.context["hooks"]]
+    assert "eslint" in commands[0]
+    assert "tsc" in commands[1]
+
+
+def test_plan_settings_json_unknown_language_uses_placeholder():
+    profile = DomainProfile(
+        domain="general",
+        display_name="General",
+        description="Test",
+        skill_slugs=["fix-issue"],
+        agent_slugs=[],
+        claude_md_sections=["plan_execute_verify"],
+        hook_templates=["lint_after_edit"],
+        detection_signals=[],
+    )
+    spec = ProjectSpec(name="x", description="x", languages=["esoteric-lang"])
+    result = plan(spec, profile, _TEMPLATES)
+    settings = next(a for a in result.artifacts if a.target_path == "settings.json")
+    cmd = settings.context["hooks"][0]["command"]
+    assert "configure this hook" in cmd
+
+
+# ---------------------------------------------------------------------------
 # Profile / catalogue consistency — regression guard
 # ---------------------------------------------------------------------------
 
@@ -247,13 +317,19 @@ def test_plan_with_real_web_profile():
     profiles_dir = Path(__file__).parent.parent / "claude_env" / "profiles"
     web_profile = load_profile(profiles_dir / "web.yaml")
     result = plan(_make_spec("real-project"), web_profile, _TEMPLATES)
-    # 3 fixed (CLAUDE.md, CONTEXT.md, docs/adr/README.md) + per-skill + per-agent + sidecars.
+    # 3 fixed (CLAUDE.md, CONTEXT.md, docs/adr/README.md) + per-skill + per-agent +
+    # sidecars + settings.json (web profile declares hook_templates).
     # Web profile ships tdd (5 sidecars) and grill-with-docs (2 sidecars).
     sidecar_count = (5 if "tdd" in web_profile.skill_slugs else 0) + (
         2 if "grill-with-docs" in web_profile.skill_slugs else 0
     )
+    settings_count = 1 if web_profile.hook_templates else 0
     expected_count = (
-        3 + len(web_profile.skill_slugs) + len(web_profile.agent_slugs) + sidecar_count
+        3
+        + len(web_profile.skill_slugs)
+        + len(web_profile.agent_slugs)
+        + sidecar_count
+        + settings_count
     )
     assert len(result.artifacts) == expected_count
     assert result.project_name == "real-project"
