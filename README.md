@@ -1,62 +1,64 @@
 # claude-env
 
-Generate calibrated Claude Code environments from project specs.
+Genera entornos calibrados de Claude Code a partir de specs de proyecto.
 
-`claude-env` writes a `.claude/` layer for any project — CLAUDE.md, skills, agents, settings, plus a `CONTEXT.md` and `docs/adr/` scaffold — so every Claude Code session starts with the right conventions for your stack.
+`claude-env` escribe una capa `.claude/` para cualquier proyecto — CLAUDE.md, skills, agents, settings, más un scaffold de `CONTEXT.md` y `docs/adr/` — para que cada sesión de Claude Code arranque con las convenciones correctas para tu stack.
+
+> Versión en inglés: [README-en.md](./README-en.md)
 
 ---
 
 ## Onboarding
 
-### What you get
+### Qué obtienes
 
-When you run `claude-env bootstrap` in a project, you get a configured `.claude/` layer plus root-level domain artifacts:
+Cuando ejecutas `claude-env bootstrap` en un proyecto, obtienes una capa `.claude/` configurada más artefactos a nivel raíz:
 
-| Artifact | Purpose |
+| Artefacto | Para qué sirve |
 |---|---|
-| `.claude/CLAUDE.md` | Project conventions per profile (think→plan→execute→verify, context management, Karpathy's 4 principles) |
-| `.claude/skills/<name>/SKILL.md` | Profile-appropriate skills with explicit `MANDATORY TRIGGERS / STRONG TRIGGERS / SKIP` frontmatter so they auto-fire when relevant |
-| `.claude/agents/<name>.md` | Subagents (security-reviewer, advisor, profile-specific reviewers) |
-| `CONTEXT.md` | Domain glossary scaffold — defines the project's ubiquitous language. Populate via the `grill-with-docs` skill as decisions crystallize. |
-| `docs/adr/README.md` | Architecture Decision Record format reference + when-to-use rules. Numbered ADRs (`0001-slug.md`, `0002-slug.md`) created lazily as decisions arise. |
+| `.claude/CLAUDE.md` | Convenciones del proyecto según perfil (think→plan→execute→verify, gestión de contexto, los 4 principios de Karpathy) |
+| `.claude/skills/<name>/SKILL.md` | Skills apropiadas al perfil con frontmatter explícito `MANDATORY TRIGGERS / STRONG TRIGGERS / SKIP` para que Claude las auto-invoque cuando corresponde |
+| `.claude/agents/<name>.md` | Subagentes (security-reviewer, advisor, reviewers específicos al perfil) |
+| `CONTEXT.md` | Scaffold de glosario de dominio — define el lenguaje ubicuo del proyecto. Se rellena con la skill `grill-with-docs` a medida que las decisiones cristalizan. |
+| `docs/adr/README.md` | Referencia del formato de ADR (Architecture Decision Record) + reglas de cuándo usarlo. Los ADRs numerados (`0001-slug.md`, `0002-slug.md`) se crean lazy, según aparecen las decisiones. |
 
-### Profiles auto-detected
+### Detección automática de perfil
 
-Filesystem signals decide which profile applies:
+Señales del filesystem deciden qué perfil aplica:
 
-| Profile | Signals |
+| Perfil | Señales |
 |---|---|
-| `web` | `package.json`, `index.html`, `tailwind.config.js`, React/Vite/Next entry files |
+| `web` | `package.json`, `index.html`, `tailwind.config.js`, entry files de React/Vite/Next |
 | `cli` | `pyproject.toml` + `cli.py` / `main.py` / `bin/` |
-| `data` | Notebooks, parquet, ML config |
-| `infra` | `terraform/`, k8s manifests |
-| `general` | Fallback when no signal matches |
+| `data` | Notebooks, parquet, config de ML |
+| `infra` | `terraform/`, manifests de k8s |
+| `general` | Fallback cuando ninguna señal matchea |
 
-Override with `--domain-hint web` if detection misses.
+Se puede sobrescribir con `--domain-hint web` si la detección falla.
 
-### How to use it
+### Cómo se usa
 
 ```bash
-# Install
+# Instalar
 uv tool install git+https://github.com/manugaralon/claude-env
 
-# Bootstrap a new project — dry-run first to preview
+# Bootstrap de un proyecto nuevo — primero dry-run para previsualizar
 cd your-project
 claude-env bootstrap --description "FastAPI todo backend" --dry-run
 claude-env bootstrap --description "FastAPI todo backend"
 
-# Or with a YAML spec (no LLM call needed, deterministic)
+# O con un spec YAML (sin llamada a LLM, determinista)
 claude-env bootstrap --spec spec.yaml
 
-# Global setup — writes ~/.claude/ baseline and installs the /claude-env skill
+# Setup global — escribe la baseline de ~/.claude/ e instala la skill /claude-env
 claude-env setup
 ```
 
-### From Claude Code
+### Desde Claude Code
 
-After running `claude-env setup`, type `/claude-env` in any Claude Code session to bootstrap the current project interactively.
+Después de correr `claude-env setup`, escribe `/claude-env` en cualquier sesión de Claude Code para hacer bootstrap del proyecto actual interactivamente.
 
-### Spec file format
+### Formato del spec file
 
 ```yaml
 name: my-project
@@ -65,130 +67,130 @@ languages: [python]
 tech_stack: [typer, rich, pytest]
 ```
 
-Markdown specs also work — `name` from the H1, `description` from the first paragraph, `tech_stack` parsed from a `**Stack:**` line.
+También funciona Markdown — `name` desde el H1, `description` desde el primer párrafo, `tech_stack` parseado de una línea `**Stack:**`.
 
-### CLI reference
+### Referencia CLI
 
 ```
-claude-env setup                          Global onboarding wizard
-claude-env bootstrap [DIR]                Generate .claude/ for a project
-  --description, -d TEXT                  One-line description (no API key needed)
-  --spec, -s PATH                         YAML or Markdown spec file
-  --dry-run                               Preview files without writing
-claude-env version                        Print version
+claude-env setup                          Wizard de onboarding global
+claude-env bootstrap [DIR]                Genera .claude/ para un proyecto
+  --description, -d TEXT                  Descripción de una línea (sin API key)
+  --spec, -s PATH                         Spec file YAML o Markdown
+  --dry-run                               Previsualiza archivos sin escribir
+claude-env version                        Imprime la versión
 ```
 
 ---
 
-## Internal stack
+## Stack interno
 
 ### Pipeline
 
-`claude-env` is a Python 3.12+ CLI built on Pydantic v2 + Jinja2 + Typer. The bootstrap pipeline is pure data transformation with file I/O isolated to the final stage:
+`claude-env` es un CLI Python 3.12+ construido sobre Pydantic v2 + Jinja2 + Typer. El pipeline de bootstrap es transformación de datos pura, con la I/O aislada al stage final:
 
 ```
 ProjectSpec (input)                      models/project_spec.py
    │
-   ▼ pipeline/input_normalizer.py        (raw description → ProjectSpec; LLM only when no --description / --spec)
+   ▼ pipeline/input_normalizer.py        (descripción raw → ProjectSpec; LLM solo si no hay --description / --spec)
    │
 DomainProfile                            profiles/<domain>.yaml + classifier.py
    │
-   ▼ pipeline/environment_planner.py     (pure: ProjectSpec + DomainProfile → GenerationPlan)
+   ▼ pipeline/environment_planner.py     (puro: ProjectSpec + DomainProfile → GenerationPlan)
    │
-GenerationPlan (list of Artifacts)
+GenerationPlan (lista de Artifacts)
    │
-   ▼ generator/generator.py              (writes files, sentinel-protected, idempotent)
+   ▼ generator/generator.py              (escribe archivos, sentinel-protected, idempotente)
    │
 .claude/ layer + CONTEXT.md + docs/adr/README.md
 ```
 
-Pure-data planning means tests don't need a filesystem to validate plan correctness — `test_environment_planner.py` exercises `plan()` against profile YAMLs directly.
+Que el planning sea data pura significa que los tests no necesitan filesystem para validar correctitud — `test_environment_planner.py` ejercita `plan()` contra los YAML de perfiles directamente.
 
 ### Layout
 
 ```
 claude_env/
-├── models/          # Pydantic v2 schemas (extra="forbid", strict types)
+├── models/          # Schemas Pydantic v2 (extra="forbid", strict types)
 │   ├── project_spec.py
 │   ├── domain_profile.py
 │   └── generation_plan.py
-├── pipeline/        # Pure transformation, no I/O
+├── pipeline/        # Transformación pura, sin I/O
 │   ├── input_normalizer.py    # raw → ProjectSpec
-│   ├── domain_classifier.py   # filesystem signals → DomainProfile
+│   ├── domain_classifier.py   # señales filesystem → DomainProfile
 │   ├── environment_planner.py # → GenerationPlan
 │   └── spec_parser.py
-├── generator/       # File I/O + idempotency
-│   ├── generator.py           # writes artifacts with sentinel headers
-│   ├── content_catalogue.py   # _SKILL_CATALOGUE: per-skill metadata + triggers
-│   └── sentinel.py            # protects user-edited files from re-writes
-├── templates/       # Jinja2 facade
+├── generator/       # I/O + idempotencia
+│   ├── generator.py           # escribe artifacts con sentinel headers
+│   ├── content_catalogue.py   # _SKILL_CATALOGUE: metadata + triggers por skill
+│   └── sentinel.py            # protege archivos editados por el usuario de re-writes
+├── templates/       # Facade Jinja2
 │   └── registry.py            # StrictUndefined + autoescape=False
-├── data/            # *.j2 templates (the canonical templates dir)
-└── profiles/        # *.yaml domain profiles
+├── data/            # *.j2 templates (directorio canónico)
+└── profiles/        # *.yaml perfiles de dominio
 ```
 
-### Skill frontmatter contract
+### Contrato del frontmatter de skills
 
-Every generated SKILL.md follows this pattern:
+Cada SKILL.md generada sigue este patrón:
 
 ```yaml
 ---
 name: skill-slug
 description: >-
-  One-line summary of what the skill does.
-  MANDATORY TRIGGERS: '/skill-slug', 'natural phrase', 'another natural phrase'.
-  STRONG TRIGGERS: contextual situations where the skill should auto-fire.
-  SKIP: do NOT trigger on cases that look similar but aren't.
+  Resumen de una línea de qué hace la skill.
+  MANDATORY TRIGGERS: '/skill-slug', 'frase natural', 'otra frase natural'.
+  STRONG TRIGGERS: situaciones contextuales donde la skill debería auto-disparar.
+  SKIP: do NOT trigger on casos que parecen similares pero no lo son.
 allowed-tools: Bash, Read, Edit, Write
 ---
 ```
 
-The `TRIGGER` / `SKIP` pattern is the antidote to "the skill exists but Claude doesn't invoke it." `_SKILL_CATALOGUE` in `generator/content_catalogue.py` declares triggers per skill; `data/skill_stub.j2` renders them via Jinja2 conditionals.
+El patrón `TRIGGER` / `SKIP` es el antídoto a "la skill existe pero Claude no la invoca". `_SKILL_CATALOGUE` en `generator/content_catalogue.py` declara los triggers por skill; `data/skill_stub.j2` los renderiza vía conditionals de Jinja2.
 
-### Idempotent re-runs
+### Re-runs idempotentes
 
-The generator writes a sentinel comment on each managed file. Re-running `claude-env bootstrap` updates managed files without clobbering user edits to non-managed files. See `generator/sentinel.py`.
+El generator escribe un comentario sentinela en cada archivo gestionado. Re-correr `claude-env bootstrap` actualiza archivos gestionados sin pisar las ediciones del usuario en archivos no-gestionados. Ver `generator/sentinel.py`.
 
-### Probation & telemetry (post-2026-05-07 batch)
+### Probation y telemetría (post-batch 2026-05-07)
 
-The 2026-05-07 batch (5 commits) shipped substantial new infrastructure (skill catalogue extension, evaluation registry, audit script, ADR-0001) on **30-day probation** — see `NOTICE-30-day-probation.md`. Skill invocations are logged by `~/.claude/hooks/skill-usage-log.sh` (PostToolUse with `Skill` matcher). Items with <3 invocations after 30 days are candidates for deletion or quarantine. **Data > intent.**
+El batch del 2026-05-07 (5 commits) trajo infraestructura nueva sustancial (extensión del catálogo de skills, registry de evaluaciones, audit script, ADR-0001) en **probation de 30 días** — ver `NOTICE-30-day-probation.md`. Las invocaciones de skills se loguean por `~/.claude/hooks/skill-usage-log.sh` (PostToolUse con matcher `Skill`). Items con <3 invocaciones tras 30 días son candidatos a borrado o cuarentena. **Data > intención.**
 
-Run on 2026-06-07:
+Correr el 2026-06-07:
 
 ```bash
 bash ~/.claude/scripts/skill-usage-report.sh
 ```
 
-### Architectural decisions
+### Decisiones arquitectónicas
 
-See `docs/adr/`:
+Ver `docs/adr/`:
 
-- **ADR-0001** (`0001-keep-python-cli-architecture.md`) — kept Python+Jinja2+Pydantic+Typer; rejected the bash+YAML manifest alternative. Rationale: validation maturity, test infrastructure, conditional template logic, idempotent re-runs are well-served by Python; bash equivalent would be more fragile at similar LOC.
+- **ADR-0001** (`0001-keep-python-cli-architecture.md`) — se mantuvo Python+Jinja2+Pydantic+Typer; rechazada la alternativa bash+YAML manifest. Razonamiento: madurez de validación, infraestructura de tests, lógica condicional de templates y re-runs idempotentes están bien servidos por Python; el equivalente bash sería más frágil con LOC similar.
 
 ### Tests
 
 ```bash
-pytest tests/   # 107/107 expected
+pytest tests/   # 107/107 esperado
 ```
 
-Tests live next to code at ~1:1 LOC ratio. `conftest.py` `real_registry` fixture uses `claude_env/data/` as canonical templates dir. `test_skill_frontmatter` handles both inline and folded-scalar (`>-`) YAML descriptions for the multi-line trigger pattern.
+Los tests viven al lado del código en ratio ~1:1 LOC. La fixture `real_registry` de `conftest.py` usa `claude_env/data/` como directorio canónico de templates. `test_skill_frontmatter` maneja tanto descripciones inline como folded-scalar (`>-`) para el patrón multi-línea de triggers.
 
-### Evaluations registry (subsystem 13)
+### Registry de evaluaciones (subsistema 13)
 
-`EVALUATIONS.md` at the repo root tracks every external source considered for integration (repos, MCPs, posts, videos) with verdict vocabulary: `integrate`, `cherry-pick`, `skip`, `research-only`, `reconsider`, `queued`. Deep evaluations of frameworks studied during integration live in `evaluations/`:
+`EVALUATIONS.md` en la raíz del repo trackea cada fuente externa considerada para integración (repos, MCPs, posts, videos) con vocabulario de veredicto: `integrate`, `cherry-pick`, `skip`, `research-only`, `reconsider`, `queued`. Las evaluaciones profundas de frameworks estudiados durante la integración viven en `evaluations/`:
 
-- `evaluations/anthropics-skills.md` — Anthropic's official skills repo (288 lines)
-- `evaluations/obra-superpowers.md` — Jesse Vincent's superpowers (740 lines)
-- `evaluations/affaan-m-everything-claude-code.md` — ECC harness (539 lines)
+- `evaluations/anthropics-skills.md` — repo oficial de skills de Anthropic (288 líneas)
+- `evaluations/obra-superpowers.md` — superpowers de Jesse Vincent (740 líneas)
+- `evaluations/affaan-m-everything-claude-code.md` — harness ECC (539 líneas)
 
 ---
 
-## Requirements
+## Requisitos
 
 - Python 3.12+
-- [uv](https://docs.astral.sh/uv/) (recommended) or pip
-- `ANTHROPIC_API_KEY` — only required when using the interactive freeform description prompt (not needed with `--description` or `--spec`)
+- [uv](https://docs.astral.sh/uv/) (recomendado) o pip
+- `ANTHROPIC_API_KEY` — solo necesaria con el prompt freeform interactivo (no necesaria con `--description` o `--spec`)
 
-## License
+## Licencia
 
 MIT
