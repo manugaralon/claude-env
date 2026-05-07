@@ -129,6 +129,68 @@ def test_audit_warns_on_non_verb_skill_description(
     assert finding.severity == "warn"
 
 
+def test_audit_fails_on_broken_skill_link(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
+    project = _bootstrap_for_audit(tmp_path, real_registry, web_plan)
+    skill_dir = project / ".claude" / "skills" / "broken-links"
+    skill_dir.mkdir(parents=True, exist_ok=True)
+    (skill_dir / "SKILL.md").write_text(
+        "---\nname: broken-links\ndescription: Test broken markdown link\n---\n\n"
+        "See [missing](does-not-exist.md) for details.\n",
+        encoding="utf-8",
+    )
+    report = audit(project)
+    assert not report.passed
+    finding = next(
+        f for f in report.findings
+        if f.rule == "SKILL_BROKEN_LINK" and "broken-links" in f.file
+    )
+    assert "does-not-exist.md" in finding.message
+
+
+def test_audit_skips_external_links(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
+    """http://, https://, mailto:, and #anchor links must not trigger the check."""
+    project = _bootstrap_for_audit(tmp_path, real_registry, web_plan)
+    skill_dir = project / ".claude" / "skills" / "extern"
+    skill_dir.mkdir(parents=True, exist_ok=True)
+    (skill_dir / "SKILL.md").write_text(
+        "---\nname: extern\ndescription: Test external link tolerance\n---\n\n"
+        "[anthropic](https://anthropic.com) "
+        "[email](mailto:x@y.com) "
+        "[anchor](#section)\n",
+        encoding="utf-8",
+    )
+    report = audit(project)
+    # No broken-link findings for this skill specifically
+    extern_findings = [
+        f for f in report.findings
+        if f.rule == "SKILL_BROKEN_LINK" and "extern" in f.file
+    ]
+    assert extern_findings == []
+
+
+def test_audit_resolves_cross_skill_links(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
+    """Links like ../grill-with-docs/CONTEXT-FORMAT.md must resolve correctly."""
+    project = _bootstrap_for_audit(tmp_path, real_registry, web_plan)
+    # The web plan emits both improve-codebase-architecture (which references
+    # ../grill-with-docs/ADR-FORMAT.md) and grill-with-docs (which provides it).
+    # If the auditor resolves correctly, no SKILL_BROKEN_LINK finding for the
+    # cross-skill reference.
+    report = audit(project)
+    cross_findings = [
+        f for f in report.findings
+        if f.rule == "SKILL_BROKEN_LINK"
+        and "improve-codebase-architecture" in f.file
+        and "ADR-FORMAT" in f.message
+    ]
+    assert cross_findings == []
+
+
 # ---------------------------------------------------------------------------
 # Report rendering
 # ---------------------------------------------------------------------------

@@ -14,6 +14,7 @@ Design constraints (from .planning/REQUIREMENTS.md):
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
@@ -227,11 +228,67 @@ def _check_skill_descriptions_verb_phrase(project_root: Path) -> list[Finding]:
     return findings
 
 
+# Markdown link pattern: [link text](target) — captures the target.
+# Excludes images (![alt](url)) by requiring no leading `!`.
+_MARKDOWN_LINK_RE = re.compile(r"(?<!\!)\[[^\]]+\]\(([^)]+)\)")
+
+
+def _is_external_link(target: str) -> bool:
+    """Skip protocols and anchors when resolving links."""
+    return (
+        target.startswith(("http://", "https://", "mailto:", "ftp://"))
+        or target.startswith("#")
+    )
+
+
+def _check_skill_link_targets_exist(project_root: Path) -> list[Finding]:
+    """Every relative markdown link in a SKILL.md/agent.md must resolve to a file.
+
+    Cherry-picked atomic skills (mattpocock, superpowers) ship sidecars they
+    reference from SKILL.md. If a sidecar is missing, the user clicks a dead
+    link mid-session. This check catches that — the same failure mode that
+    motivated the sidecar emission work in commit 06017cc.
+    """
+    findings: list[Finding] = []
+    targets: list[Path] = []
+
+    skills_dir = project_root / ".claude" / "skills"
+    if skills_dir.is_dir():
+        targets.extend(sorted(skills_dir.glob("*/SKILL.md")))
+    agents_dir = project_root / ".claude" / "agents"
+    if agents_dir.is_dir():
+        targets.extend(sorted(agents_dir.glob("*.md")))
+
+    for source in targets:
+        body = source.read_text(encoding="utf-8")
+        for match in _MARKDOWN_LINK_RE.finditer(body):
+            link = match.group(1).strip()
+            if _is_external_link(link):
+                continue
+            # Strip in-page anchors: file.md#section
+            link_path = link.split("#", 1)[0]
+            if not link_path:
+                continue
+            resolved = (source.parent / link_path).resolve()
+            if not resolved.exists():
+                findings.append(Finding(
+                    severity="error",
+                    rule="SKILL_BROKEN_LINK",
+                    file=str(source.relative_to(project_root)),
+                    message=(
+                        f"link `{link}` does not resolve to a file "
+                        f"(expected at {resolved.relative_to(project_root.resolve()) if resolved.is_relative_to(project_root.resolve()) else resolved})"
+                    ),
+                ))
+    return findings
+
+
 _CHECKS = (
     _check_claude_md_line_count,
     _check_settings_json_valid,
     _check_agents_have_skills_field,
     _check_skill_descriptions_verb_phrase,
+    _check_skill_link_targets_exist,
 )
 
 
