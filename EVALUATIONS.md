@@ -114,6 +114,21 @@ Ver `notes/` para detail files (frontmatter ya estructurado). Cuando se decida v
 | Source | Type | Verdict | Date | Notes |
 |---|---|---|---|---|
 | [@bashi_fuirkashi DWrR5XyTQTq](https://instagram.com/p/DWrR5XyTQTq/) | ig-post | queued | 2026-04-21 | "Upgrade your Claude Code Skills." Transcript en `notes/`. |
+| [@speedy_devv DY5w_nQDNw7](https://instagram.com/p/DY5w_nQDNw7/) | ig-post | skip | 2026-06-08 | Opus 4.8 cheatsheet (marketing "comment OPUS"). Detail: `notes/claude-env-ideas_20260608_143301.md` |
+| [AI With Mariah DYcTfiiFtXD](https://instagram.com/p/DYcTfiiFtXD/) | ig-post | research-only | 2026-06-08 | 10 Substack reads sobre AI agéntica; surfaces OpenClaw + Chief-of-Staff pattern. Detail: `notes/claude-env-ideas_20260608_143446.md` |
+| [@chase.ai DX5m_9LnDA8](https://instagram.com/p/DX5m_9LnDA8/) | ig-post | cherry-pick | 2026-06-08 | Top-10 OSS repos May — surfaces impeccable, claude-video, codeburn, n8n-mcp, design-extract, open-design. Detail: `notes/claude-env-ideas_20260608_143642.md` |
+| [Claude finance news DYFPjHBkwLw](https://instagram.com/p/DYFPjHBkwLw/) | ig-post | skip | 2026-06-08 | News/meme: Anthropic finance agents. Sin sustancia accionable. Detail: `notes/claude-env-ideas_20260608_143705.md` |
+| [/memory pattern DX9TVLojYTa](https://instagram.com/p/DX9TVLojYTa/) | ig-post | skip | 2026-06-08 | `/memory` multi-tier CLAUDE.md — ya es patrón core. Detail: `notes/claude-env-ideas_20260608_143746.md` |
+| [best-skills pyramid DXYtOdgCoEO](https://instagram.com/p/DXYtOdgCoEO/) | ig-post | cherry-pick | 2026-06-08 | "Best skills 2026" — surfaces firecrawl, composio, supermemory, remotion. Detail: `notes/claude-env-ideas_20260608_143753.md` |
+| [Enrique Rocha DW-0kCiAsLn](https://instagram.com/p/DW-0kCiAsLn/) | ig-post | skip | 2026-06-08 | Ultraplan — ya cubierto por `gsd-ultraplan-phase`. Detail: `notes/claude-env-ideas_DW-0kCiAsLn.md` |
+| [PabloInPublic DY7ocxjOu-6](https://instagram.com/p/DY7ocxjOu-6/) | ig-post | research-only | 2026-06-08 | Dynamic workflows nativos (Claude escribe su orquestación). Comparar vs GSD. Detail: `notes/claude-env-ideas_DY7ocxjOu-6.md` |
+| [Girsta AI DYCVxTstJdE](https://instagram.com/p/DYCVxTstJdE/) | ig-post | skip | 2026-06-08 | "Find Skills" plugin — ya tienes `find-skill`. Detail: `notes/claude-env-ideas_DYCVxTstJdE.md` |
+| [Vicente Burgos DYCzXW0tgav](https://instagram.com/p/DYCzXW0tgav/) | ig-post | skip | 2026-06-08 | Finance agents (news/marketing). Detail: `notes/claude-env-ideas_DYCzXW0tgav.md` |
+| [James Goldbach DYk9qkGE7Sv](https://instagram.com/p/DYk9qkGE7Sv/) | ig-post | research-only | 2026-06-08 | Stack /goal /agents /ultrareview /ultraplan encadenados. Detail: `notes/claude-env-ideas_DYk9qkGE7Sv.md` |
+| [nicnonac DYKKzzGSbtA](https://instagram.com/p/DYKKzzGSbtA/) | ig-post | research-only | 2026-06-08 | github/spec-kit — competidor directo de GSD. Head-to-head pendiente. Detail: `notes/claude-env-ideas_DYKKzzGSbtA.md` |
+| [Javi Niguez DYo7vfqKa02](https://instagram.com/p/DYo7vfqKa02/) | ig-post | skip | 2026-06-08 | Spec Kit otra vez (dup de DYKKzzGSbtA). Detail: `notes/claude-env-ideas_DYo7vfqKa02.md` |
+| [Bashiri DYsMnzehGwH](https://instagram.com/p/DYsMnzehGwH/) | ig-post | skip | 2026-06-08 | AI-engineer mistakes (career-bait; conceptos RAG/LangGraph). Detail: `notes/claude-env-ideas_DYsMnzehGwH.md` |
+| [PabloInPublic DYXpWy8uu_b](https://instagram.com/p/DYXpWy8uu_b/) | ig-post | cherry-pick | 2026-06-08 | 3 frontend-design skills: impeccable, Emil Kowalski motion, Taste. Detail: `notes/claude-env-ideas_DYXpWy8uu_b.md` |
 
 ---
 
