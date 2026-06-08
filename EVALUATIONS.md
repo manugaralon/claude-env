@@ -25,6 +25,17 @@
 | [VoltAgent/awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents) | 19k | cherry-pick | — | 100+ subagentes — catálogo de referencia. |
 | [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | 116k | cherry-pick | CLAUDE.md addendum | Es un solo CLAUDE.md de pitfalls de LLMs según Karpathy. Absorber, no integrar. |
 
+## Individual skills (frontend & media)
+
+Surgidos de la 2ª capa de los IG (2026-06-08).
+
+| Source | Stars | Verdict | Notes |
+|---|---|---|---|
+| [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | 36k | integrate | Skill de diseño frontend (23 cmds, anti-pattern rules deterministas sin coste de tokens, `/impeccable live` browser loop). Encaja en flujo GSD: `gsd-ui-phase` (pre-code) → impeccable (polish) → `gsd-ui-review` (gate). Apache-2.0. Detail: `evaluations/pbakaus-impeccable.md` |
+| [emilkowalski/skill](https://github.com/emilkowalski/skill) | 2.1k | cherry-pick | Skill de animación de Emil Kowalski. Redundante si tienes impeccable; absorber solo la heurística "frecuencia → animar o no" en un `DESIGN.md`. Sin licencia declarada. |
+| [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 38k | skip | Presets de estilo (soft/minimalist/brutalist). Redundante con impeccable; absorber los 3 presets como anclas en `DESIGN.md`. MIT, v2 experimental. |
+| [bradautomates/claude-video](https://github.com/bradautomates/claude-video) | 1.9k | cherry-pick | Skill `/watch`: análisis **visual** de frames (ffmpeg) + audio — el delta que tu `capture.py` (solo audio) no cubre. Plugin; reusa `GROQ_API_KEY`. MIT. Detail: `evaluations/bradautomates-claude-video.md` |
+
 ## Methodologies
 
 | Source | Verdict | Notes |
@@ -32,6 +43,7 @@
 | [glittercowboy/get-shit-done](https://github.com/glittercowboy/get-shit-done) (GSD) | integrate | **Methodology primaria** — columna vertebral spec-driven a nivel proyecto/phase. Ya instalada (v1.38.3). |
 | [obra/superpowers](https://github.com/obra/superpowers) | cherry-pick | **Methodology secundaria** — patrones a nivel change (grilling, ADRs, CONTEXT.md). |
 | Tu CLAUDE.md (`plan→execute→verify`) | integrate | **Methodology default** cuando no hay GSD ni superpowers activos (cambios pequeños). |
+| [github/spec-kit](https://github.com/github/spec-kit) | cherry-pick | SDD de GitHub (110k⭐, MIT). **NO switch** — GSD gana en lifecycle scope; spec-kit es feature-scoped. Robar: Constitution file (`.planning/CONSTITUTION.md`), cross-artifact check (`/gsd-analyze`), markers `[P]`. No council-worthy. Detail: `evaluations/github-spec-kit.md` |
 
 ## MCPs (capabilities)
 
@@ -68,6 +80,14 @@
 | [colbymchenry/codegraph](https://github.com/colbymchenry/codegraph) | 44.5k | cherry-pick | MCP de code-graph **en runtime** (agente), 100% local, MIT. ~47% menos tokens / 58% menos tool-calls. Complementa `/gsd-graphify` (build-time). Caveat: installer `curl\|sh`, pre-1.0, bus-factor. Detail: `evaluations/colbymchenry-codegraph.md` |
 | [Lum1104/Understand-Anything](https://github.com/Lum1104/Understand-Anything) | 54.9k | cherry-pick | Plugin de graph **interactivo human-facing** (onboarding/tours/dashboard). Distinto consumidor que codegraph (humano vs agente). MIT. Detail: `evaluations/Lum1104-Understand-Anything.md` |
 | [chopratejas/headroom](https://github.com/chopratejas/headroom) | 17.7k | cherry-pick | Compresión de tokens 60-95% vía **MCP server** (solo esa forma). Encaja con token-discipline; cero solape. Lossy — validar fidelidad + fijar versión. Apache-2.0. Detail: `evaluations/chopratejas-headroom.md` |
+
+### Evaluados 2026-06-08 — round 2 (surgido de IG)
+
+| Source | Stars | Verdict | Notes |
+|---|---|---|---|
+| [mendableai/firecrawl](https://github.com/mendableai/firecrawl) | 130k | cherry-pick | Scraping/crawling a escala + extracción estructurada vía MCP. Self-host OSS (AGPL-3.0) para evitar key. Solo si necesitas bulk scraping; playwright + research skills cubren lo ad-hoc. Detail: `evaluations/mendableai-firecrawl.md` |
+| [ComposioHQ/composio](https://github.com/ComposioHQ/composio) | 28.7k | skip | Hub de integraciones (500+ apps) vía MCP. Cloud-only + API key. Net-new pero sin caso de uso para solo dev token-disciplined. Revisit si surge automatización cross-app. |
+| [supermemoryai/supermemory](https://github.com/supermemoryai/supermemory) | 26.1k | skip | Memory API cloud. Solape directo con claude-mem (mismo motivo que agentmemory). Cloud lock-in sin ganancia neta. |
 
 ## Memory / persistence
 
