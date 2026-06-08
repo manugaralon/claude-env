@@ -61,6 +61,14 @@
 | [Jpisnice/shadcn-ui-mcp-server](https://github.com/Jpisnice/shadcn-ui-mcp-server) | 2.8k | skip | Probablemente redundante con `vercel:shadcn` skill ya cargado. Install solo si gap concreto. |
 | Google MCPs (Maps, BigQuery, Firebase, Cloud) | varies | defer-per-project | Cada uno necesita gcloud auth + project setup. Install per-project, no preemptive. |
 
+### Code-graph & context tooling (evaluados 2026-06-08)
+
+| Source | Stars | Verdict | Notes |
+|---|---|---|---|
+| [colbymchenry/codegraph](https://github.com/colbymchenry/codegraph) | 44.5k | cherry-pick | MCP de code-graph **en runtime** (agente), 100% local, MIT. ~47% menos tokens / 58% menos tool-calls. Complementa `/gsd-graphify` (build-time). Caveat: installer `curl\|sh`, pre-1.0, bus-factor. Detail: `evaluations/colbymchenry-codegraph.md` |
+| [Lum1104/Understand-Anything](https://github.com/Lum1104/Understand-Anything) | 54.9k | cherry-pick | Plugin de graph **interactivo human-facing** (onboarding/tours/dashboard). Distinto consumidor que codegraph (humano vs agente). MIT. Detail: `evaluations/Lum1104-Understand-Anything.md` |
+| [chopratejas/headroom](https://github.com/chopratejas/headroom) | 17.7k | cherry-pick | Compresión de tokens 60-95% vía **MCP server** (solo esa forma). Encaja con token-discipline; cero solape. Lossy — validar fidelidad + fijar versión. Apache-2.0. Detail: `evaluations/chopratejas-headroom.md` |
+
 ## Memory / persistence
 
 | Source | Verdict | Notes |
@@ -69,6 +77,7 @@
 | Auto-memory hook (CLAUDE.md global) | integrate | Fact-store del usuario. Ya activo. |
 | `CONTEXT.md` (mattpocock pattern) | integrate | Ubiquitous language por proyecto. Por implementar en bootstrap. |
 | `docs/adr/` (ADR scaffold) | integrate | Decisions log por proyecto. Por implementar en bootstrap. |
+| [rohitg00/agentmemory](https://github.com/rohitg00/agentmemory) | skip | Redundante con `claude-mem` (ya integrado y activo). Benchmarks retrieval-only auto-medidos, no comparan vs claude-mem; no justifican migrar un sistema de memoria sticky. Detail: `evaluations/rohitg00-agentmemory.md` |
 
 ## Research-only (no se shippea)
 
@@ -110,7 +119,7 @@ Ver `notes/` para detail files (frontmatter ya estructurado). Cuando se decida v
 
 ## Mantenimiento
 
-- **Añadir nueva fuente**: usar skill `/evaluate <url>` (por implementar) — fetcha metadata, pregunta verdict, escribe detail file + actualiza esta tabla.
-- **Buscar si algo ya fue evaluado**: `grep <url-or-keyword> EVALUATIONS.md` o usar `/check-evaluation <query>` (por implementar).
+- **Añadir nueva fuente**: usar skill `/evaluate <url>` — fetcha metadata, pregunta verdict, escribe detail file + actualiza esta tabla.
+- **Buscar si algo ya fue evaluado**: `grep <url-or-keyword> EVALUATIONS.md` o usar `/check-evaluation <query>`.
 - **Revisitar entries `reconsider`**: revisión periódica (mensual) de entries con `revisit_after` vencido.
 - **Cutoff de exploración**: NO existe — la evaluación continua es parte del producto. Lo que sí hay es priorización: P1 entries (anthropics/skills, superpowers, everything-claude-code) bloquean decisiones arquitectónicas; el resto se evalúa en background.
