@@ -35,6 +35,8 @@ Surgidos de la 2ª capa de los IG (2026-06-08).
 | [emilkowalski/skill](https://github.com/emilkowalski/skill) | 2.1k | cherry-pick | Skill de animación de Emil Kowalski. Redundante si tienes impeccable; absorber solo la heurística "frecuencia → animar o no" en un `DESIGN.md`. Sin licencia declarada. |
 | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 38k | skip | Presets de estilo (soft/minimalist/brutalist). Redundante con impeccable; absorber los 3 presets como anclas en `DESIGN.md`. MIT, v2 experimental. |
 | [bradautomates/claude-video](https://github.com/bradautomates/claude-video) | 1.9k | cherry-pick | Skill `/watch`: análisis **visual** de frames (ffmpeg) + audio — el delta que tu `capture.py` (solo audio) no cubre. Plugin; reusa `GROQ_API_KEY`. MIT. Detail: `evaluations/bradautomates-claude-video.md` |
+| [Manavarya09/design-extract](https://github.com/Manavarya09/design-extract) | 3.1k | integrate | Extrae el design-system de cualquier URL → tokens DTCG/Tailwind/shadcn/Figma (capa *inward*, complementa impeccable que genera *outward*). MCP-native. MIT. Detail: `evaluations/Manavarya09-design-extract.md` |
+| [remotion-dev/remotion](https://github.com/remotion-dev/remotion) | 49.4k | research-only | Vídeo programático en React. Net-new (nada genera vídeo) pero React-heavy + licencia comercial no-estándar, sin caso de uso recurrente. Revisit si surge necesidad (changelogs animados, demos). Detail: `evaluations/remotion-dev-remotion.md` |
 
 ## Methodologies
 
@@ -44,6 +46,12 @@ Surgidos de la 2ª capa de los IG (2026-06-08).
 | [obra/superpowers](https://github.com/obra/superpowers) | cherry-pick | **Methodology secundaria** — patrones a nivel change (grilling, ADRs, CONTEXT.md). |
 | Tu CLAUDE.md (`plan→execute→verify`) | integrate | **Methodology default** cuando no hay GSD ni superpowers activos (cambios pequeños). |
 | [github/spec-kit](https://github.com/github/spec-kit) | cherry-pick | SDD de GitHub (110k⭐, MIT). **NO switch** — GSD gana en lifecycle scope; spec-kit es feature-scoped. Robar: Constitution file (`.planning/CONSTITUTION.md`), cross-artifact check (`/gsd-analyze`), markers `[P]`. No council-worthy. Detail: `evaluations/github-spec-kit.md` |
+
+## Dev tooling / observability
+
+| Source | Stars | Verdict | Notes |
+|---|---|---|---|
+| [getagentseal/codeburn](https://github.com/getagentseal/codeburn) | 7.7k | integrate | TUI/CLI zero-config que lee `~/.claude/` y clasifica gasto de tokens por actividad/MCP/proyecto. `codeburn optimize` detecta ghost skills, MCPs sin usar, CLAUDE.md inflado. Complementa gsd-session-report (cross-session vs per-phase). MIT. Detail: `evaluations/getagentseal-codeburn.md` |
 
 ## MCPs (capabilities)
 
@@ -61,6 +69,7 @@ Surgidos de la 2ª capa de los IG (2026-06-08).
 | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | 32k | reconsider | MCP-native, Rust, Vercel-mantained. Defer hasta que Rust compile barrier valga la pena vs playwright. |
 | [LvcidPsyche/auto-browser](https://github.com/LvcidPsyche/auto-browser) | 402 | skip | Solo si necesitas Docker+noVNC para sesiones remotas con humano-in-loop. |
 | [browser-use/browser-use](https://github.com/browser-use/browser-use) | 92k | skip | Es librería Python, no MCP. No entra directamente. |
+| [browser-use/browser-harness](https://github.com/browser-use/browser-harness) | 14.5k | cherry-pick | Harness CDP con loop de domain-skills auto-escritos. NO como browser primario (playwright MCP cubre el caso base, ~80% solape); cherry-pick su `interaction-skills/` (iframes, shadow DOM) como overlay de referencia. MIT, joven. Detail: `evaluations/browser-use-browser-harness.md` |
 
 ### MCPs evaluados 2026-05-07
 
@@ -80,6 +89,7 @@ Surgidos de la 2ª capa de los IG (2026-06-08).
 | [colbymchenry/codegraph](https://github.com/colbymchenry/codegraph) | 44.5k | cherry-pick | MCP de code-graph **en runtime** (agente), 100% local, MIT. ~47% menos tokens / 58% menos tool-calls. Complementa `/gsd-graphify` (build-time). Caveat: installer `curl\|sh`, pre-1.0, bus-factor. Detail: `evaluations/colbymchenry-codegraph.md` |
 | [Lum1104/Understand-Anything](https://github.com/Lum1104/Understand-Anything) | 54.9k | cherry-pick | Plugin de graph **interactivo human-facing** (onboarding/tours/dashboard). Distinto consumidor que codegraph (humano vs agente). MIT. Detail: `evaluations/Lum1104-Understand-Anything.md` |
 | [chopratejas/headroom](https://github.com/chopratejas/headroom) | 17.7k | cherry-pick | Compresión de tokens 60-95% vía **MCP server** (solo esa forma). Encaja con token-discipline; cero solape. Lossy — validar fidelidad + fijar versión. Apache-2.0. Detail: `evaluations/chopratejas-headroom.md` |
+| [safishamsi/graphify](https://github.com/safishamsi/graphify) | 63k | skip | 4º tool de code-graph — redundante con `/gsd-graphify` + codegraph + understand-anything. Único diferenciador: ingesta multi-modal (PDFs/vídeo/screenshots vía Whisper), sin necesidad real aquí. MIT. |
 
 ### Evaluados 2026-06-08 — round 2 (surgido de IG)
 
@@ -88,6 +98,7 @@ Surgidos de la 2ª capa de los IG (2026-06-08).
 | [mendableai/firecrawl](https://github.com/mendableai/firecrawl) | 130k | cherry-pick | Scraping/crawling a escala + extracción estructurada vía MCP. Self-host OSS (AGPL-3.0) para evitar key. Solo si necesitas bulk scraping; playwright + research skills cubren lo ad-hoc. Detail: `evaluations/mendableai-firecrawl.md` |
 | [ComposioHQ/composio](https://github.com/ComposioHQ/composio) | 28.7k | skip | Hub de integraciones (500+ apps) vía MCP. Cloud-only + API key. Net-new pero sin caso de uso para solo dev token-disciplined. Revisit si surge automatización cross-app. |
 | [supermemoryai/supermemory](https://github.com/supermemoryai/supermemory) | 26.1k | skip | Memory API cloud. Solape directo con claude-mem (mismo motivo que agentmemory). Cloud lock-in sin ganancia neta. |
+| [czlonkowski/n8n-mcp](https://github.com/czlonkowski/n8n-mcp) | 21.6k | skip | MCP de n8n (1851 nodes, validación de workflows). Fuera de scope — no usas n8n. Revisit si n8n entra al stack. MIT. |
 
 ## Memory / persistence
 
@@ -115,6 +126,10 @@ Surgidos de la 2ª capa de los IG (2026-06-08).
 | [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | 135k | skip | Full agent project, no skills/env. |
 | [jamesrochabrun/AgentHub](https://github.com/jamesrochabrun/AgentHub) | 371 | skip | App Swift de gestión de sesiones. Tool externo. |
 | [ripienaar/free-for-dev](https://github.com/ripienaar/free-for-dev) | 121k | skip | Lista de SaaS gratis. Otro dominio. |
+| [nexu-io/open-design](https://github.com/nexu-io/open-design) | 61.5k | skip | App desktop GUI (clon open-source de Claude Design, 259 skills). Solapa con impeccable+generate-image+infographics; GUI choca con workflow terminal-native. Apache-2.0. |
+| [santifer/career-ops](https://github.com/santifer/career-ops) | 48k | skip | Job-search command center (Playwright portales, fit-scoring CV). Sin workflow de búsqueda de empleo. Revisit si cambia. MIT. |
+| [Upload-Post/upload-post-skill](https://github.com/Upload-Post/upload-post-skill) | — | skip | Skill que envuelve el SaaS Upload-Post (publicar a redes). Sin workflow de contenido. Key + coste mensual. |
+| typefully (SaaS) | — | skip | Wrapper de SaaS para schedule de threads X/LinkedIn. Sin workflow de contenido; sin repo canónico. |
 
 ## Skill registries / aggregators
 
