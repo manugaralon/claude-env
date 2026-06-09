@@ -41,4 +41,12 @@ Each gate: *if `.planning/CONSTITUTION.md` exists, Read it; its principles are B
 
 **To gate another project:** drop a `.planning/CONSTITUTION.md` into it (copy claude-env's as template). The 3 gates are global, so any project with the file is gated; projects without skip silently.
 
-**A (pending):** bake CONSTITUTION.md scaffolding into the claude-env generator so every generated environment ships one.
+**A (done, 2026-06-09, commit d879f51):** the generator emits `.planning/CONSTITUTION.md` into every generated env — `constitution.j2` (universal core + domain principles), `Artifact.write_once` + generator existence-check-first, `_DOMAIN_CONSTITUTION_PRINCIPLES` (web/cli/data/infra), generated CLAUDE.md references it. 167 tests + end-to-end smoke verified. Built via /gsd-quick (right-sized).
+
+## Disposition of cherry-picks #2 and #3 (2026-06-09)
+
+Assessed against GSD's existing machinery — **both already covered, so NOT built** (building would be redundant per L024: don't reimplement what the tool already provides).
+- **#2 cross-artifact consistency (`/speckit.analyze`):** GSD already covers it via plan-checker (PLAN.md revision loop), gap-closure (`--gaps`), verify-work (deliverables vs success criteria), and SPEC.md-as-locked-requirements (reinforced by the constitution gate). `/speckit.analyze` is a single-shot version of that distributed loop. Marginal traceability gap not worth a redundant patch.
+- **#3 parallelization markers (`[P]`):** GSD execute-phase already does wave-based parallel execution (analyze deps → group waves → spawn agents) plus the `analyze-dependencies` workflow. `[P]` markers are a cruder, dependency-blind version. Redundant.
+
+**Net:** the Constitution (B→A) was the only genuine gap GSD lacked. The spec-kit cherry-pick harvest is complete.
