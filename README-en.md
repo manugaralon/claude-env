@@ -2,7 +2,7 @@
 
 Generate calibrated Claude Code environments from project specs.
 
-`claude-env` writes a `.claude/` layer for any project — CLAUDE.md, skills, agents, settings, plus a `CONTEXT.md` and `docs/adr/` scaffold — so every Claude Code session starts with the right conventions for your stack.
+`claude-env` writes a `.claude/` layer for any project — CLAUDE.md, skills, agents, settings, a `CONSTITUTION.md` (project DNA), plus `CONTEXT.md` and `docs/adr/` scaffolds — so every Claude Code session starts with the right conventions for your stack.
 
 ---
 
@@ -19,6 +19,7 @@ When you run `claude-env bootstrap` in a project, you get a configured `.claude/
 | `.claude/agents/<name>.md` | Subagents (security-reviewer, advisor, profile-specific reviewers) |
 | `CONTEXT.md` | Domain glossary scaffold — defines the project's ubiquitous language. Populate via the `grill-with-docs` skill as decisions crystallize. |
 | `docs/adr/README.md` | Architecture Decision Record format reference + when-to-use rules. Numbered ADRs (`0001-slug.md`, `0002-slug.md`) created lazily as decisions arise. |
+| `.planning/CONSTITUTION.md` | Project architectural DNA — binding principles (universal core + domain-specific). GSD `spec/plan/execute` workflows read it and gate against it. **Write-once**: re-generation never clobbers your edits. |
 
 ### Profiles auto-detected
 
@@ -123,7 +124,7 @@ GenerationPlan (list of Artifacts)
    │
    ▼ generator/generator.py              (writes files, sentinel-protected, idempotent)
    │
-.claude/ layer + CONTEXT.md + docs/adr/README.md
+.claude/ layer + CONTEXT.md + docs/adr/README.md + .planning/CONSTITUTION.md
 ```
 
 Pure-data planning means tests don't need a filesystem to validate plan correctness — `test_environment_planner.py` exercises `plan()` against profile YAMLs directly.

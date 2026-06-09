@@ -17,6 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Generator** - Executes GenerationPlan: all output files with idempotent merge strategy (completed 2026-04-19)
 - [x] **Phase 4: CLI + Skill** - Typer entrypoint (setup, bootstrap, --dry-run), Claude Code skill wrapper (completed 2026-04-20)
 - [x] **Phase 5: Audit** - Structural validation of generated environment before developer starts (completed 2026-05-07)
+- [x] **Phase 6: Constitution Generation** - Generator emits `.planning/CONSTITUTION.md` (universal + domain principles, write-once); generated CLAUDE.md references it (implemented via /gsd-quick 2026-06-09)
 
 ## Phase Details
 
@@ -100,11 +101,13 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 5. Audit | 0/TBD | Not started | - |
 
 ### Phase 6: Constitution Generation
+**Goal**: The generator emits a `.planning/CONSTITUTION.md` (project architectural DNA — universal core + domain-specific principles) into every generated environment, and the generated CLAUDE.md references it. Closes the spec-kit "Constitution" cherry-pick (B→A: B patched GSD to gate against it; A makes the generator produce it).
+**Depends on**: Phase 3 (Generator)
+**Requirements**: See `phases/06-constitution-generation/06-SPEC.md` (5 locked, ambiguity 0.11)
+**Success Criteria** (what must be TRUE):
+  1. Generating an env produces `.planning/CONSTITUTION.md` at the project root (not under `.claude/`)
+  2. The constitution is domain-adapted (universal core + ≥1 domain-specific principle) and stays ≤ ~50 lines
+  3. The generated CLAUDE.md references the constitution and stays ≤ 200 lines
+  4. Re-generation never overwrites an existing CONSTITUTION.md (write-once)
 
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 5
-**Plans:** 0 plans
-
-Plans:
-- [ ] TBD (run /gsd-plan-phase 6 to break down)
+**Status**: Implemented via /gsd-quick 2026-06-09 (commit d879f51). 167 tests + end-to-end smoke verified.

@@ -2,7 +2,7 @@
 
 Genera entornos calibrados de Claude Code a partir de specs de proyecto.
 
-`claude-env` escribe una capa `.claude/` para cualquier proyecto — CLAUDE.md, skills, agents, settings, más un scaffold de `CONTEXT.md` y `docs/adr/` — para que cada sesión de Claude Code arranque con las convenciones correctas para tu stack.
+`claude-env` escribe una capa `.claude/` para cualquier proyecto — CLAUDE.md, skills, agents, settings, un `CONSTITUTION.md` (ADN del proyecto) y scaffolds de `CONTEXT.md` y `docs/adr/` — para que cada sesión de Claude Code arranque con las convenciones correctas para tu stack.
 
 > Versión en inglés: [README-en.md](./README-en.md)
 
@@ -21,6 +21,7 @@ Cuando ejecutas `claude-env bootstrap` en un proyecto, obtienes una capa `.claud
 | `.claude/agents/<name>.md` | Subagentes (security-reviewer, advisor, reviewers específicos al perfil) |
 | `CONTEXT.md` | Scaffold de glosario de dominio — define el lenguaje ubicuo del proyecto. Se rellena con la skill `grill-with-docs` a medida que las decisiones cristalizan. |
 | `docs/adr/README.md` | Referencia del formato de ADR (Architecture Decision Record) + reglas de cuándo usarlo. Los ADRs numerados (`0001-slug.md`, `0002-slug.md`) se crean lazy, según aparecen las decisiones. |
+| `.planning/CONSTITUTION.md` | ADN arquitectónico del proyecto — principios vinculantes (núcleo universal + específicos del dominio). Los workflows GSD `spec/plan/execute` lo leen y gatean contra él. **Write-once**: re-generar nunca pisa tus ediciones. |
 
 ### Detección automática de perfil
 
@@ -125,7 +126,7 @@ GenerationPlan (lista de Artifacts)
    │
    ▼ generator/generator.py              (escribe archivos, sentinel-protected, idempotente)
    │
-.claude/ layer + CONTEXT.md + docs/adr/README.md
+.claude/ layer + CONTEXT.md + docs/adr/README.md + .planning/CONSTITUTION.md
 ```
 
 Que el planning sea data pura significa que los tests no necesitan filesystem para validar correctitud — `test_environment_planner.py` ejercita `plan()` contra los YAML de perfiles directamente.
