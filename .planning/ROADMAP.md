@@ -18,6 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: CLI + Skill** - Typer entrypoint (setup, bootstrap, --dry-run), Claude Code skill wrapper (completed 2026-04-20)
 - [x] **Phase 5: Audit** - Structural validation of generated environment before developer starts (completed 2026-05-07)
 - [x] **Phase 6: Constitution Generation** - Generator emits `.planning/CONSTITUTION.md` (universal + domain principles, write-once); generated CLAUDE.md references it (implemented via /gsd-quick 2026-06-09)
+- [ ] **Phase 7: Augment Mode** - Apply the env layer to existing/mature projects without clobbering bespoke setup (sentinel managed-block merge for an existing CLAUDE.md, write-once constitution, skip-if-exists, dry-run-able). De-risked 2026-06-09, not yet built.
 
 ## Phase Details
 
@@ -111,3 +112,19 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
   4. Re-generation never overwrites an existing CONSTITUTION.md (write-once)
 
 **Status**: Implemented via /gsd-quick 2026-06-09 (commit d879f51). 167 tests + end-to-end smoke verified.
+
+### Phase 7: Augment Mode
+**Goal**: Apply claude-env's env layer to a project that ALREADY has history/bespoke files — without ever clobbering hand-written content. This is the cross-project "apply to existing repos" path (the 90% case for a solo dev with live projects), complementing greenfield `bootstrap`. Motivated by Agus/Clibit (mature, bespoke CLAUDE.md).
+**Depends on**: Phase 3 (Generator) + Phase 6 (write-once)
+**Requirements**: TBD (run /gsd-spec-phase 7)
+**Design (de-risked 2026-06-09)**:
+  - `sentinel.py` (`wrap`/`merge`/`has_sentinel`) are ALREADY pure string fns on arbitrary content — not coupled to the GLOBAL layer. The GLOBAL coupling lives only in the generator's layer-based dispatch.
+  - Implementation = add a `merge_strategy` field to `Artifact` (`overwrite` | `sentinel` | `write_once` | `skip_if_exists`) and dispatch on strategy, not layer. Consistent with the Phase-3 rule "strategy from metadata, not content".
+  - Existing CLAUDE.md → `sentinel` (managed block appended; human content sovereign, NEVER a 2nd CLAUDE.md). CONSTITUTION.md → `write_once`. Other bespoke artifacts → `skip_if_exists`. Always `--dry-run`-able; if it can't merge safely, skip + report.
+**Success Criteria** (what must be TRUE):
+  1. Running augment on a project with a bespoke root CLAUDE.md leaves the human content byte-identical and only updates the managed block
+  2. No second CLAUDE.md is ever created
+  3. An existing CONSTITUTION.md is never overwritten; bespoke artifacts are skipped, not clobbered
+  4. `--dry-run` shows the exact delta and writes nothing
+
+**Status**: Planned + de-risked, NOT built. Build in a focused session (spec → plan → execute, or /gsd-quick — it's ~A-sized).
