@@ -95,6 +95,10 @@ Recent decisions affecting current work:
 - [Phase 04-cli-skill]: Heavy imports kept inside command bodies to keep CLI startup fast and avoid loading anthropic when using --spec
 - [Phase 04-cli-skill]: SKILL.md is a fixed string constant, not a Jinja template — no user-dependent content needed for the global bootstrap skill
 
+### Roadmap Evolution
+
+- Phase 6 added 2026-06-09: Constitution Generation (generator emits `.planning/CONSTITUTION.md` + generated CLAUDE.md references it). SPEC written same day (spec-phase, ambiguity 0.11, gate passed). Origin: spec-kit cherry-pick, B→A sequence (B = GSD constitution-gate, done). First live exercise of the phase-B gate.
+
 ### Pending Todos
 
 None yet.

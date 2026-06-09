@@ -98,3 +98,13 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 3. Generator | 2/2 | Complete    | 2026-04-19 |
 | 4. CLI + Skill | 2/2 | Complete   | 2026-04-20 |
 | 5. Audit | 0/TBD | Not started | - |
+
+### Phase 6: Constitution Generation
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 5
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 6 to break down)
