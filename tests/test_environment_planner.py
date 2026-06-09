@@ -28,7 +28,7 @@ def _make_spec(name: str = "my-project") -> ProjectSpec:
 
 
 _TEMPLATES = [
-    "claude_md_project.j2", "skill_stub.j2", "agent_stub.j2",
+    "claude_md_project.j2", "constitution.j2", "skill_stub.j2", "agent_stub.j2",
     "quality_gate_skill.j2", "advisor_agent.j2", "karpathy_guidelines_skill.j2",
     "llm_council_skill.j2", "context_md.j2", "adr_readme.j2",
     "settings_json.j2",
@@ -286,7 +286,11 @@ def test_plan_produces_agent_artifacts():
 def test_plan_all_artifacts_project_layer():
     result = plan(_make_spec(), _PROFILE, _TEMPLATES)
     for artifact in result.artifacts:
-        assert artifact.layer == OutputLayer.PROJECT
+        if artifact.target_path == ".planning/CONSTITUTION.md":
+            # Constitution lives at the repo root (.planning/), not under .claude/
+            assert artifact.layer == OutputLayer.PROJECT_ROOT
+        else:
+            assert artifact.layer == OutputLayer.PROJECT
 
 
 def test_plan_artifact_context_keys():
@@ -307,8 +311,11 @@ def test_plan_artifact_context_keys():
 
 def test_invalid_template_raises():
     # skill_stub.j2 missing from available templates
-    # (include context_md/adr_readme so validation gets past the fixed artifacts and hits the skill artifacts first)
-    partial_templates = ["claude_md_project.j2", "agent_stub.j2", "context_md.j2", "adr_readme.j2"]
+    # (include the fixed-artifact templates so validation reaches the skill artifacts)
+    partial_templates = [
+        "claude_md_project.j2", "constitution.j2", "agent_stub.j2",
+        "context_md.j2", "adr_readme.j2",
+    ]
     with pytest.raises(ValueError, match="skill_stub.j2"):
         plan(_make_spec(), _PROFILE, partial_templates)
 
@@ -317,15 +324,15 @@ def test_plan_with_real_web_profile():
     profiles_dir = Path(__file__).parent.parent / "claude_env" / "profiles"
     web_profile = load_profile(profiles_dir / "web.yaml")
     result = plan(_make_spec("real-project"), web_profile, _TEMPLATES)
-    # 3 fixed (CLAUDE.md, CONTEXT.md, docs/adr/README.md) + per-skill + per-agent +
-    # sidecars + settings.json (web profile declares hook_templates).
+    # 4 fixed (CLAUDE.md, CONTEXT.md, docs/adr/README.md, .planning/CONSTITUTION.md)
+    # + per-skill + per-agent + sidecars + settings.json (web declares hook_templates).
     # Web profile ships tdd (5 sidecars) and grill-with-docs (2 sidecars).
     sidecar_count = (5 if "tdd" in web_profile.skill_slugs else 0) + (
         2 if "grill-with-docs" in web_profile.skill_slugs else 0
     )
     settings_count = 1 if web_profile.hook_templates else 0
     expected_count = (
-        3
+        4
         + len(web_profile.skill_slugs)
         + len(web_profile.agent_slugs)
         + sidecar_count
@@ -351,3 +358,37 @@ def test_plan_produces_adr_readme_artifact():
     assert adr_readme.template_id == "adr_readme.j2"
     assert adr_readme.layer == OutputLayer.PROJECT
     assert adr_readme.context["project_name"] == "proj-z"
+
+
+# ---------------------------------------------------------------------------
+# Constitution (Phase 6 — spec-kit cherry-pick)
+# ---------------------------------------------------------------------------
+
+
+def test_plan_produces_constitution_artifact():
+    result = plan(_make_spec("proj-c"), _PROFILE, _TEMPLATES)
+    const = next(a for a in result.artifacts if a.target_path == ".planning/CONSTITUTION.md")
+    assert const.template_id == "constitution.j2"
+    # .planning/ is at the repo root, not under .claude/
+    assert const.layer == OutputLayer.PROJECT_ROOT
+    # User-owned after creation — re-generation must never clobber it
+    assert const.write_once is True
+    assert const.context["project_name"] == "proj-c"
+    assert const.context["domain"] == "web"
+    assert "principles" in const.context
+
+
+def test_plan_constitution_domain_principles():
+    # Known domain (web) gets domain-specific principles appended to the core
+    web_result = plan(_make_spec(), _make_profile("web", [], []), _TEMPLATES)
+    web_const = next(
+        a for a in web_result.artifacts if a.target_path == ".planning/CONSTITUTION.md"
+    )
+    assert len(web_const.context["principles"]) > 0
+
+    # Unknown/general domain gets only the universal core (no domain section)
+    gen_result = plan(_make_spec(), _make_profile("general", [], []), _TEMPLATES)
+    gen_const = next(
+        a for a in gen_result.artifacts if a.target_path == ".planning/CONSTITUTION.md"
+    )
+    assert gen_const.context["principles"] == []

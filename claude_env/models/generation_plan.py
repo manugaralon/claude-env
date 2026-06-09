@@ -25,6 +25,9 @@ class Artifact(BaseModel):
     template_id: str
     context: dict[str, object]
     layer: OutputLayer
+    # When True, the generator skips this artifact if the target already exists,
+    # leaving user-owned content (e.g. CONSTITUTION.md) byte-untouched.
+    write_once: bool = False
 
 
 class GenerationPlan(BaseModel):

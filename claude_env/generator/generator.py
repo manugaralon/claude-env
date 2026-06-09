@@ -91,6 +91,11 @@ class Generator:
 
         resolved = resolve_plan_paths(plan, project_root, global_root)
         for artifact, target in zip(plan.artifacts, resolved, strict=True):
+            # Write-once: existence check FIRST, before any render/merge/sentinel.
+            # If the artifact opts in and the target exists, leave it untouched
+            # (user-owned content, e.g. CONSTITUTION.md). Not added to `written`.
+            if artifact.write_once and target.exists():
+                continue
             context = enrich_artifact_context(artifact, plan)
             rendered_content = self._registry.render(artifact.template_id, context)
 

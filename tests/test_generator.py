@@ -422,3 +422,29 @@ def test_project_root_layer_path_traversal_blocked(
     )
     with pytest.raises(ValueError, match="Path traversal"):
         Generator(real_registry).execute(plan, tmp_path, tmp_path / "global")
+
+
+# ---------------------------------------------------------------------------
+# Constitution write-once (Phase 6 — spec-kit cherry-pick)
+# ---------------------------------------------------------------------------
+
+
+def test_constitution_created_when_absent(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
+    Generator(real_registry).execute(web_plan, tmp_path, tmp_path / "global")
+    const = tmp_path / ".planning/CONSTITUTION.md"
+    assert const.exists()
+    assert "Constitution" in const.read_text(encoding="utf-8")
+
+
+def test_constitution_write_once_preserves_user_edits(
+    tmp_path: Path, real_registry, web_plan: GenerationPlan
+) -> None:
+    gen = Generator(real_registry)
+    gen.execute(web_plan, tmp_path, tmp_path / "global")
+    const = tmp_path / ".planning/CONSTITUTION.md"
+    const.write_text("MY HAND-EDITED CONSTITUTION", encoding="utf-8")
+    # Re-run generation: write_once must leave the edited file byte-identical.
+    gen.execute(web_plan, tmp_path, tmp_path / "global")
+    assert const.read_text(encoding="utf-8") == "MY HAND-EDITED CONSTITUTION"

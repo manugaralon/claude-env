@@ -43,6 +43,32 @@ _SKILL_SIDECARS: dict[str, list[tuple[str, str]]] = {
     ],
 }
 
+# Domain-specific constitution principles appended to the universal core in the
+# generated .planning/CONSTITUTION.md. Domains absent here get only the universal
+# core (template renders no domain section). Keep each list tight (P7).
+_DOMAIN_CONSTITUTION_PRINCIPLES: dict[str, list[str]] = {
+    "web": [
+        "Mobile-first: design at 375px, 44px minimum tap targets, no horizontal scroll.",
+        "Accessibility is non-negotiable: semantic HTML, keyboard nav, WCAG AA contrast.",
+        "No layout shift: reserve space for async content before it loads.",
+    ],
+    "cli": [
+        "Composability: read stdin, write stdout, exit codes are the contract.",
+        "Fail loud with actionable messages to stderr; never leave silent partial state.",
+        "Sane defaults: the happy path requires zero flags.",
+    ],
+    "data": [
+        "Reproducibility: deterministic pipelines, pinned dependencies, versioned inputs.",
+        "Validate at boundaries: schema-check data on ingest, fail fast on drift.",
+        "No silent data loss: every transform is auditable and recoverable.",
+    ],
+    "infra": [
+        "Idempotent and declarative: applying twice equals applying once.",
+        "Least privilege by default; secrets never live in code or logs.",
+        "Every change is reversible: plan/diff before apply.",
+    ],
+}
+
 
 def plan(
     spec: ProjectSpec,
@@ -109,6 +135,25 @@ def plan(
                 "project_name": spec.name,
             },
             layer=OutputLayer.PROJECT,
+        )
+    )
+
+    # Project constitution (spec-kit cherry-pick): architectural DNA at
+    # .planning/CONSTITUTION.md — universal core + domain-specific principles.
+    # PROJECT_ROOT because .planning/ lives at the repo root, not under .claude/.
+    # write_once: a constitution is user-owned after creation — re-generation
+    # must never clobber the dev's edits.
+    artifacts.append(
+        Artifact(
+            target_path=".planning/CONSTITUTION.md",
+            template_id="constitution.j2",
+            context={
+                "project_name": spec.name,
+                "domain": profile.domain,
+                "principles": _DOMAIN_CONSTITUTION_PRINCIPLES.get(profile.domain, []),
+            },
+            layer=OutputLayer.PROJECT_ROOT,
+            write_once=True,
         )
     )
 
