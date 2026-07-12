@@ -54,7 +54,7 @@ This batch is shipped because the alternative (delete-before-measuring) has its 
 |---|---|---|
 | **Sobrevive** (≥3 invocaciones) | `evolve` (3) | Se queda |
 | **Quarantined** (0 invocaciones, sin referencias en CLAUDE.md) | caveman, check-evaluation, evaluate, find-skill, improve-codebase-architecture, llm-council, mcp-builder, receiving-code-review, requesting-code-review, skill-creator, subagent-driven-development, writing-plans, zoom-out (13) | Movidos a `~/.claude/skills-quarantine/` 2026-07-12 |
-| **Pendiente decisión Manuel** (0 invocaciones PERO referenciados como capa atómica en `~/.claude/CLAUDE.md` y CLAUDE.md de proyectos) | grill-with-docs, tdd, systematic-debugging, brainstorming, verification-before-completion, instinct-add, instinct-status (7) | Quarantinar exige limpiar las referencias en CLAUDE.md a la vez; se decide junto |
+| **Quarantined (2ª tanda, decisión Manuel 2026-07-12)** (0 invocaciones; estaban referenciados como capa atómica en `~/.claude/CLAUDE.md`) | grill-with-docs, tdd, systematic-debugging, brainstorming, verification-before-completion, instinct-add, instinct-status (7) | Movidos a quarantine + secciones "Jerarquía de metodologías", "Loop de auto-mejora" y tabla de escalado del CLAUDE.md global reescritas: GSD + Default son los únicos flujos |
 
 **Caveats de instrumentación:** el hook solo registra invocaciones vía tool `Skill` en sesión principal — metodología seguida sin invocar el skill (p.ej. TDD dentro de gsd-executor) no computa. `consciousness-council` (22 usos) no era parte del batch y confirma su estatus canónico sobre `llm-council` (0 usos).
 
