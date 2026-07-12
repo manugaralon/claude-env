@@ -84,6 +84,13 @@ class AuditReport:
 def _check_claude_md_line_count(project_root: Path) -> list[Finding]:
     target = project_root / ".claude" / "CLAUDE.md"
     if not target.exists():
+        # Augment mode: on a project with a bespoke root ./CLAUDE.md the
+        # generator merges its managed block into that file instead of writing
+        # a second .claude/CLAUDE.md. The human content there is sovereign and
+        # unbounded; the injected managed block is template-bounded (< cap) by
+        # construction — so there is nothing to flag.
+        if (project_root / "CLAUDE.md").exists():
+            return []
         return [Finding(
             severity="error",
             rule="CLAUDE_MD_MISSING",

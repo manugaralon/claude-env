@@ -218,7 +218,7 @@ def bootstrap(
     ),
 ) -> None:
     """Generate .claude/ layer for the given project directory."""
-    from claude_env.generator.generator import Generator, resolve_plan_paths
+    from claude_env.generator.generator import Generator, resolve_plan
     from claude_env.mcp_registry import resolve_plugin_hints
     from claude_env.pipeline.domain_classifier import classify, load_all_profiles
     from claude_env.pipeline.environment_planner import plan as make_plan
@@ -285,9 +285,13 @@ def bootstrap(
     )
 
     if dry_run:
+        # Report the resolved per-artifact action against the ACTUAL target
+        # state (create / merge-managed-block / skip-exists / overwrite),
+        # writing zero bytes.
         console.print("[yellow]Dry run — no files written[/yellow]")
-        for path in resolve_plan_paths(generation_plan, project_root, global_root):
-            console.print(f"  [dim]would write[/dim] {path}")
+        for r in resolve_plan(generation_plan, project_root, global_root):
+            verb = "would skip" if r.action == "skip-exists" else "would write"
+            console.print(f"  [dim]{verb}[/dim] {r.target} [dim]({r.action})[/dim]")
         for hint in resolve_plugin_hints(plugin_slugs):
             console.print(f"  [dim]plugin[/dim] {hint}")
         return

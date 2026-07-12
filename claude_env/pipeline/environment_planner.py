@@ -2,7 +2,12 @@
 from __future__ import annotations
 
 from claude_env.models.domain_profile import DomainProfile
-from claude_env.models.generation_plan import Artifact, GenerationPlan, OutputLayer
+from claude_env.models.generation_plan import (
+    Artifact,
+    GenerationPlan,
+    MergeStrategy,
+    OutputLayer,
+)
 from claude_env.models.project_spec import ProjectSpec
 
 _SKILL_TEMPLATE_MAP: dict[str, str] = {
@@ -99,7 +104,11 @@ def plan(
 
     artifacts: list[Artifact] = []
 
-    # Per-project CLAUDE.md
+    # Per-project CLAUDE.md.
+    # sentinel: augment mode merges a managed block into a project's EXISTING
+    # CLAUDE.md (root ./CLAUDE.md preferred, else .claude/CLAUDE.md) rather than
+    # ever creating a second one; a greenfield project gets a fresh
+    # sentinel-wrapped .claude/CLAUDE.md.
     artifacts.append(
         Artifact(
             target_path="CLAUDE.md",
@@ -110,10 +119,13 @@ def plan(
                 "sections": profile.claude_md_sections,
             },
             layer=OutputLayer.PROJECT,
+            merge_strategy=MergeStrategy.SENTINEL,
         )
     )
 
-    # Domain context (mattpocock CONTEXT.md pattern — ubiquitous language scaffold)
+    # Domain context (mattpocock CONTEXT.md pattern — ubiquitous language scaffold).
+    # skip_if_exists: this is a hand-edited living doc — create it only when the
+    # project doesn't already have one; never clobber the developer's version.
     artifacts.append(
         Artifact(
             target_path="CONTEXT.md",
@@ -123,10 +135,12 @@ def plan(
                 "description": spec.description,
             },
             layer=OutputLayer.PROJECT,
+            merge_strategy=MergeStrategy.SKIP_IF_EXISTS,
         )
     )
 
-    # ADR scaffold (docs/adr/README.md — format guide; numbered ADRs created lazily)
+    # ADR scaffold (docs/adr/README.md — format guide; numbered ADRs created lazily).
+    # skip_if_exists: a project may already maintain its own ADR docs.
     artifacts.append(
         Artifact(
             target_path="docs/adr/README.md",
@@ -135,6 +149,7 @@ def plan(
                 "project_name": spec.name,
             },
             layer=OutputLayer.PROJECT,
+            merge_strategy=MergeStrategy.SKIP_IF_EXISTS,
         )
     )
 
@@ -157,7 +172,9 @@ def plan(
         )
     )
 
-    # Skills (and any sidecars they ship with)
+    # Skills (and any sidecars they ship with).
+    # skip_if_exists: skills are frequently hand-tuned per project; never
+    # overwrite an existing one.
     for slug in profile.skill_slugs:
         artifacts.append(
             Artifact(
@@ -165,6 +182,7 @@ def plan(
                 template_id=_SKILL_TEMPLATE_MAP.get(slug, "skill_stub.j2"),
                 context={"slug": slug, "domain": profile.domain},
                 layer=OutputLayer.PROJECT,
+                merge_strategy=MergeStrategy.SKIP_IF_EXISTS,
             )
         )
         for sidecar_name, sidecar_template in _SKILL_SIDECARS.get(slug, []):
@@ -174,10 +192,12 @@ def plan(
                     template_id=sidecar_template,
                     context={"slug": slug, "domain": profile.domain},
                     layer=OutputLayer.PROJECT,
+                    merge_strategy=MergeStrategy.SKIP_IF_EXISTS,
                 )
             )
 
-    # Agents
+    # Agents.
+    # skip_if_exists: agents are hand-editable too — leave existing ones alone.
     for slug in profile.agent_slugs:
         artifacts.append(
             Artifact(
@@ -185,6 +205,7 @@ def plan(
                 template_id=_AGENT_TEMPLATE_MAP.get(slug, "agent_stub.j2"),
                 context={"slug": slug, "domain": profile.domain},
                 layer=OutputLayer.PROJECT,
+                merge_strategy=MergeStrategy.SKIP_IF_EXISTS,
             )
         )
 
