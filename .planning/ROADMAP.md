@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: CLI + Skill** - Typer entrypoint (setup, bootstrap, --dry-run), Claude Code skill wrapper (completed 2026-04-20)
 - [x] **Phase 5: Audit** - Structural validation of generated environment before developer starts (completed 2026-05-07)
 - [x] **Phase 6: Constitution Generation** - Generator emits `.planning/CONSTITUTION.md` (universal + domain principles, write-once); generated CLAUDE.md references it (implemented via /gsd-quick 2026-06-09)
-- [ ] **Phase 7: Augment Mode** - Apply the env layer to existing/mature projects without clobbering bespoke setup (sentinel managed-block merge for an existing CLAUDE.md, write-once constitution, skip-if-exists, dry-run-able). De-risked 2026-06-09, not yet built.
+- [x] **Phase 7: Augment Mode** - Apply the env layer to existing/mature projects without clobbering bespoke setup (sentinel managed-block merge for an existing CLAUDE.md, write-once constitution, skip-if-exists, dry-run-able). Shipped 2026-07-12.
 
 ## Phase Details
 
@@ -127,4 +127,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
   3. An existing CONSTITUTION.md is never overwritten; bespoke artifacts are skipped, not clobbered
   4. `--dry-run` shows the exact delta and writes nothing
 
-**Status**: Planned + de-risked, NOT built. Build in a focused session (spec → plan → execute, or /gsd-quick — it's ~A-sized).
+**Status**: ✅ SHIPPED 2026-07-12. `MergeStrategy` enum + `merge_strategy` field on `Artifact`; generator dispatches on strategy (back-compat mapped from layer when unset). CLAUDE.md → sentinel merge into an existing root/`.claude` file (never a 2nd); CONTEXT.md/skills/agents → skip_if_exists; constitution → write_once. `--dry-run` reports per-artifact action. 172 tests pass (156 prior unchanged + 16 new augment tests). See `07-SUMMARY.md`.

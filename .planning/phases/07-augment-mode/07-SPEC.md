@@ -66,11 +66,11 @@ Bound by claude-env's `.planning/CONSTITUTION.md` (SPEC produced under its gate)
 
 ## Acceptance Criteria
 
-- [ ] `Artifact` has a `merge_strategy` field; the generator dispatches on it; all existing tests pass unchanged.
-- [ ] On a project with a bespoke `./CLAUDE.md`, augment injects a managed block into it (no second CLAUDE.md); non-managed lines are byte-identical.
-- [ ] An existing `CONSTITUTION.md` is never overwritten (write_once preserved); existing `CONTEXT.md` / skills are skipped, not clobbered.
-- [ ] `--dry-run` reports the correct per-artifact action against real target state and writes zero bytes.
-- [ ] `bootstrap` with no flags on a mature-project copy alters zero human-authored content (only managed blocks + absent files).
+- [x] `Artifact` has a `merge_strategy` field; the generator dispatches on it; all existing tests pass unchanged.
+- [x] On a project with a bespoke `./CLAUDE.md`, augment injects a managed block into it (no second CLAUDE.md); non-managed lines are byte-identical.
+- [x] An existing `CONSTITUTION.md` is never overwritten (write_once preserved); existing `CONTEXT.md` / skills are skipped, not clobbered.
+- [x] `--dry-run` reports the correct per-artifact action against real target state and writes zero bytes.
+- [x] `bootstrap` with no flags on a mature-project copy alters zero human-authored content (only managed blocks + absent files).
 
 ## Ambiguity Report
 
