@@ -41,3 +41,21 @@ Three things the advisor council itself missed:
 This batch is shipped because the alternative (delete-before-measuring) has its own bias. We commit, we instrument, we measure, we cull. Data > intent.
 
 — Reviewed and merged 2026-05-07.
+
+---
+
+## Review executed 2026-07-12 (66 days, window extendida — la review del 06-07 no llegó a correrse)
+
+`skill-usage-report.sh` sobre `skill-invocations.log`: **117 invocaciones, 19 skills únicos** desde 2026-05-07. El log está dominado por GSD (`gsd-plan-phase` 22, `gsd-execute-phase` 18, `gsd-discuss-phase` 17…) y `consciousness-council` (22). El council de 2026-05-07 tenía razón: la capa atómica cherry-pickeada resultó ~100% theatre según el uso real.
+
+**Batch en probation identificado por mtime (2026-05-06/07):** 26 dirs − 5 exentos por este NOTICE = 21 skills.
+
+| Resultado | Skills | Acción |
+|---|---|---|
+| **Sobrevive** (≥3 invocaciones) | `evolve` (3) | Se queda |
+| **Quarantined** (0 invocaciones, sin referencias en CLAUDE.md) | caveman, check-evaluation, evaluate, find-skill, improve-codebase-architecture, llm-council, mcp-builder, receiving-code-review, requesting-code-review, skill-creator, subagent-driven-development, writing-plans, zoom-out (13) | Movidos a `~/.claude/skills-quarantine/` 2026-07-12 |
+| **Pendiente decisión Manuel** (0 invocaciones PERO referenciados como capa atómica en `~/.claude/CLAUDE.md` y CLAUDE.md de proyectos) | grill-with-docs, tdd, systematic-debugging, brainstorming, verification-before-completion, instinct-add, instinct-status (7) | Quarantinar exige limpiar las referencias en CLAUDE.md a la vez; se decide junto |
+
+**Caveats de instrumentación:** el hook solo registra invocaciones vía tool `Skill` en sesión principal — metodología seguida sin invocar el skill (p.ej. TDD dentro de gsd-executor) no computa. `consciousness-council` (22 usos) no era parte del batch y confirma su estatus canónico sobre `llm-council` (0 usos).
+
+**Restaurar:** `mv ~/.claude/skills-quarantine/<name> ~/.claude/skills/`. Borrado definitivo de la quarantine: decisión manual futura (sugerido: +30 días sin restauraciones).
