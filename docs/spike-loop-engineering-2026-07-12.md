@@ -54,4 +54,27 @@ Antes de programar un loop, subir escalón a escalón — parar en el más bajo 
 - Aparece tarea recurrente real que exija juicio LLM sin humano delante.
 - Routines ganan cap de tokens por run → baja el riesgo estructural del escalón 4.
 
-*Spike cerrado 2026-07-12. Coste: 2 búsquedas web + 1 agente claude-code-guide (~80k tokens subagente).*
+---
+
+## Parte 2 — Implementación de los escalones baratos (2026-07-12, misma sesión)
+
+### Escalón 0 — SHIPPED: `env-heartbeat` (cero tokens)
+
+Las dos tareas recurrentes identificadas ya tienen loop sin LLM:
+
+- **Script**: `~/.claude/scripts/env-heartbeat.sh` — informe semanal a `~/.claude/instrumentation/heartbeat/YYYY-MM-DD.md` + notify-send. Cubre: (1) skill usage últimos 30 días (del log de instrumentación), (2) tamaño de quarantine + alarma cuando venza la review de borrado (2026-08-11), (3) colas `queued`/`reconsider` de EVALUATIONS.md.
+- **Units**: `~/.config/systemd/user/env-heartbeat.{service,timer}` — lunes 09:30, `Persistent=true` (catch-up si el equipo estaba apagado).
+- **Estado**: script validado con run manual (primer informe ya útil: 6 queued + 4 reconsider acumulados). **Timer escrito pero NO activado** — el harness bloqueó (correctamente) que un agente active persistencia; la activa el humano:
+  ```
+  systemctl --user enable --now env-heartbeat.timer
+  ```
+
+### Escalón 3 — probe empírico: hallazgo de auth
+
+`claude -p --model haiku --max-turns 2` desde subproceso devuelve **"Not logged in"** pese a `~/.claude/.credentials.json` válido (OAuth Max, scopes correctos, sin expirar). La sesión interactiva OAuth no sirve para headless: **los runs no-interactivos en suscripción requieren `claude setup-token`** (token de larga duración) o `ANTHROPIC_API_KEY`. Implicaciones:
+
+1. Un timer con `claude -p` mal autenticado **falla en ~1s sin quemar tokens** — failure mode barato y ruidoso, no silencioso.
+2. Antes de cualquier loop unattended con LLM: correr `claude setup-token` una vez y verificar `claude -p "OK"` desde terminal limpia. Sin eso, el escalón 3 no existe en esta máquina.
+3. Coste del probe fallido: 0 tokens. El dato de coste real por run queda pendiente del setup-token (no urgente — el veredicto sigue siendo no-unattended-ahora).
+
+*Spike cerrado 2026-07-12 (partes 1+2). Coste: 2 búsquedas web + 1 agente claude-code-guide (~80k tokens subagente) + 0 tokens en probes.*
