@@ -177,6 +177,7 @@ Ver `notes/` para detail files (frontmatter ya estructurado). Cuando se decida v
 | [DaPwq_hk_Yl](https://instagram.com/p/DaPwq_hk_Yl/) | ig-post | queued | 2026-07-12 | Login-gated — captura falló incluso con yt-dlp 2026.07.04. Pendiente `claude_env/cookies.txt`. |
 | [DY4gcNRkseO](https://instagram.com/p/DY4gcNRkseO/) | ig-post | queued | 2026-07-12 | Login-gated — pendiente `claude_env/cookies.txt`. |
 | [DY1tRvLEqXU](https://instagram.com/p/DY1tRvLEqXU/) | ig-post | queued | 2026-07-12 | Login-gated — pendiente `claude_env/cookies.txt`. |
+| [Fable red-team DasgGmvBY1H](https://instagram.com/p/DasgGmvBY1H/) | ig-post | cherry-pick | 2026-07-13 | Claims Fable-sale-de-planes verificadas 2026-07-12 (cierto + engagement bait en el framing). Kernel integrado: **Fable-vía-créditos = asiento red-team** (review adversarial contexto-cero del trabajo del tier medio, ~$0.5-2/review) — nombrado en CLAUDE.md global; el 90% del patrón ya era `/advisor` + ciclos adversariales. Detail: `notes/claude-env-ideas_DasgGmvBY1H.md` |
 
 ## Transcript tooling (2026-07-12)
 
